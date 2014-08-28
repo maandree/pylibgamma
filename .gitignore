@@ -1,0 +1,16 @@
+_/
+bin/
+obj/
+\#*\#
+.*
+!.git*
+*~
+__pycache__/
+*.bak
+*.sw[op]
+*.o
+*.out
+*.su
+*.gch
+*.py[co]
+
