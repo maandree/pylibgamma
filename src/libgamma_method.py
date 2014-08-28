@@ -92,7 +92,7 @@ class MethodCapabilities:
     '''
     Capabilities of adjustment methods
     
-    ---- Integers variables ----
+    ---- Integer variables ----
     
     @variable  crtc_information               OR of the CRTC information fields in `CRTCInformation`
                                               that may (but can fail) be read successfully.
