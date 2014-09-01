@@ -570,3 +570,202 @@ that required there is a monitor attached to the connector,
 and that status itself.
 '''
 
+
+
+class GammaRamps:
+    '''
+    Gamma ramp structure.
+    '''
+    
+    def __init__(self, red_size : int, green_size : int = ..., blue_size : int = ..., *, depth : int = 16):
+        '''
+        Constructor.
+        
+        @param  red_size    The number of stops in the gamma ramp for the red channel
+        @param  green_size  The number of stops in the gamma ramp for the green channel, `...` for `red_size`
+        @param  blue_size   The number of stops in the gamma ramp for the blue channel, `...` for `green_size`
+        @param  depth       The depth of the gamma ramps
+        '''
+        if green_size is ...:  green_size = red_size
+        if blue_size is ...:   blue_size = green_size
+        
+        self.__depth = depth
+        if depth not in (8, 16, 32, 64, -1, -2):
+            raise ValueError('invalid gamma ramp depth')
+        
+        if   depth ==  8:  ramp_struct = libgamma_native_gamma_ramps8_create (red_size, green_size, blue_size)
+        elif depth == 16:  ramp_struct = libgamma_native_gamma_ramps16_create(red_size, green_size, blue_size)
+        elif depth == 32:  ramp_struct = libgamma_native_gamma_ramps32_create(red_size, green_size, blue_size)
+        elif depth == 64:  ramp_struct = libgamma_native_gamma_ramps64_create(red_size, green_size, blue_size)
+        elif depth == -1:  ramp_struct = libgamma_native_gamma_rampsf_create (red_size, green_size, blue_size)
+        elif depth == -2:  ramp_struct = libgamma_native_gamma_rampsd_create (red_size, green_size, blue_size)
+        if isinstance(ramp_struct, int):
+            import c
+            error = OSError()
+            error.errno = ramp_struct
+            error.strerror = c.strerror(error.errno)
+            raise error
+        (self.__ramps, red, green, blue) = ramp_struct
+        
+        class Ramp:
+            '''
+            A gamma ramp for one single channel.
+            '''
+            
+            def __init__(self, ramp, size : int, depth : int):
+                '''
+                Constructor.
+                
+                @param  ramp   The gamma ramp.
+                @param  size   The number of stops in the gamma ramp.
+                @param  depth  The depth of the gamma ramp.
+                '''
+                self.__size = size
+                self.__ramp = ramp
+                if   depth ==  8:  fs = (libgamma_native_gamma_ramps8_get,  libgamma_native_gamma_ramps8_set)
+                elif depth == 16:  fs = (libgamma_native_gamma_ramps16_get, libgamma_native_gamma_ramps16_set)
+                elif depth == 32:  fs = (libgamma_native_gamma_ramps32_get, libgamma_native_gamma_ramps32_set)
+                elif depth == 64:  fs = (libgamma_native_gamma_ramps64_get, libgamma_native_gamma_ramps64_set)
+                elif depth == -1:  fs = (libgamma_native_gamma_rampsf_get,  libgamma_native_gamma_rampsf_set)
+                elif depth == -2:  fs = (libgamma_native_gamma_rampsd_get,  libgamma_native_gamma_rampsd_set)
+                (self.__get, self.__set) = fs
+            
+            
+            @property
+            def size(self) -> int:
+                '''
+                Get the number of stops in the gamma ramp.
+                
+                @return  The number of stops in the gamma ramp.
+                '''
+                return self.__size
+            
+            @size.setter
+            def size(self, value : int):
+                '''
+                It is not possible to change this attribute, but a setter is
+                required for the getter to function.
+                '''
+                raise AttributeError('cannot resize ramp')
+            
+            def __len__(self) -> int:
+                '''
+                Get the number of stops in the gamma ramp.
+                
+                @return  The number of stops in the gamma ramp.
+                '''
+                return self.__size
+            
+            def __getitem__(self, indices):
+                '''
+                Read the gamma ramp.
+                
+                @param   indices:slice     The stops to read.
+                @return  :list<int|float>  The values of the read stops.
+                
+                -- OR --
+                
+                @param   indices:int  The index of the stop to read.
+                @return  :int|float   The value of the read stop.
+                '''
+                if isinstance(indices, slice):
+                    start = indices.start
+                    stop = indices.stop
+                    step = indices.step
+                    if start is None:  start = 0
+                    elif start < 0:    start += self.__size
+                    if stop is None:   stop = self.__size
+                    elif stop < 0:     stop += self.__size
+                    if step is None:   step = 1
+                    return [self.__get(self.__ramp, i) for i in range(start, stop, step)]
+                else:
+                    if indices < 0:
+                        indices += self.__size
+                    return self.__get(self.__ramp, indices)
+            
+            def __setitem__(self, indices, values):
+                '''
+                Modify the gamma ramp.
+                
+                @param  indices:slice          The stops to modify.
+                @param  values:itr<int|float>  The values for the selected stops.
+                
+                -- OR --
+                
+                @param  indices:int        The index of the stop to modify.
+                @param  values:int|float   The new value for the stop.
+                '''
+                if isinstance(indices, slice):
+                    start = indices.start
+                    stop = indices.stop
+                    step = indices.step
+                    if start is None:  start = 0
+                    elif start < 0:    start += self.__size
+                    if stop is None:   stop = self.__size
+                    elif stop < 0:     stop += self.__size
+                    if step is None:   step = 1
+                    indices = list(range(start, stop, step))
+                    if not len(indices) == len(values):
+                        raise ValueError('cannot resize ramp')
+                    for index, value in zip(indices, values):
+                        self.__set(self.__ramp, index, value)
+                else:
+                    if indices < 0:
+                        indices += self.__size
+                    self.__set(self.__ramp, indices, values)
+        
+        self.red   = Ramp(red,   red_size,   depth)
+        self.green = Ramp(green, green_size, depth)
+        self.blue  = Ramp(blue,  blue_size,  depth)
+    
+    
+    def __del__(self):
+        '''
+        This function is called when the object is not longer in use.
+        '''
+        if   self.__depth ==  8:  libgamma_native_gamma_ramps8_free(self.__ramps)
+        elif self.__depth == 16:  libgamma_native_gamma_ramps16_free(self.__ramps)
+        elif self.__depth == 32:  libgamma_native_gamma_ramps32_free(self.__ramps)
+        elif self.__depth == 64:  libgamma_native_gamma_ramps64_free(self.__ramps)
+        elif self.__depth == -1:  libgamma_native_gamma_rampsf_free(self.__ramps)
+        elif self.__depth == -2:  libgamma_native_gamma_rampsd_free(self.__ramps)
+    
+    
+    @property
+    def size(self) -> tuple:
+        '''
+        Get the ramps' sizes.
+        
+        @return  :(red:int, green:int, blue:int)  The size of each individual ramp.
+        '''
+        return (self.red.size, self.green.size, self.blue.size)
+    
+    
+    @size.setter
+    def size(self, value):
+        '''
+        It is not possible to change this attribute, but a setter is
+        required for the getter to function.
+        '''
+        raise AttributeError('cannot resize ramps')
+    
+    
+    @property
+    def depth(self) -> int:
+        '''
+        Get the depth of ramps.
+        
+        @return  :int  The ramps' depth in bits and -1 for single precision floating
+                       point and -2 for doublesingle precision floating point
+        '''
+        return self.__depth
+    
+    
+    @size.setter
+    def depth(self, value):
+        '''
+        It is not possible to change this attribute, but a setter is
+        required for the getter to function.
+        '''
+        raise AttributeError('cannot change depth')
+
