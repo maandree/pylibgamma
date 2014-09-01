@@ -22,12 +22,6 @@ cimport cython
 from posix.unistd cimport gid_t
 
 
-cdef extern int errno
-'''
-`errno` of course.
-'''
-
-
 cdef extern gid_t libgamma_group_gid
 '''
 Group that the user needs to be a member of if
@@ -81,15 +75,6 @@ Return the value of a `libgamma` error definition refered to by name.
                or does not refer to a `libgamma` error.
 '''
 
-
-
-def libgamma_native_get_errno() -> int:
-    '''
-    Get the current value, for the current thread, of `errno`.
-    
-    @return  The value `errno`.
-    '''
-    return int(errno)
 
 
 def libgamma_native_get_group_gid() -> int:

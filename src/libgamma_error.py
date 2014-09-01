@@ -109,16 +109,6 @@ def perror(name : str, error_code : int):
     libgamma_native_perror(name, error_code)
 
 
-def get_errno() -> int:
-    '''
-    Get the current value, for the current thread, of `errno`.
-    
-    @return  The value `errno`.
-    '''
-    from libgamma_native_error import libgamma_native_get_errno
-    return libgamma_native_get_errno()
-
-
 def name_of_error(value : int) -> str:
     '''
     Returns the name of the definition associated with a `libgamma` error code.
