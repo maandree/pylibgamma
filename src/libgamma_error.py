@@ -22,26 +22,28 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 class LibgammaGroupGid:
     '''
     Data descriptor for accessing the
-    `libgamma_group_gid` variable
+    `libgamma_group_gid` variable.
     '''
     
     def __init__(self):
         '''
-        Constructor
+        Constructor.
         '''
         pass
     
-    def __get__(self, obj, obj_type = None):
+    def __get__(self, obj, obj_type = None) -> int:
         '''
-        Getter
+        Getter.
         '''
-        pass # TODO read libgamma_group_gid
+        from libgamma_native_error import libgamma_native_get_group_gid
+        return libgamma_native_get_group_gid()
     
-    def __set__(self, obj, value):
+    def __set__(self, obj, value : int):
         '''
-        Setter
+        Setter.
         '''
-        pass # TODO write libgamma_group_gid
+        from libgamma_native_error import libgamma_native_set_group_gid
+        return libgamma_native_set_group_gid(value)
 
 group_gid = LibgammaGroupGid()
 '''
@@ -53,26 +55,28 @@ Group that the user needs to be a member of if
 class LibgammaGroupName:
     '''
     Data descriptor for accessing the
-    `libgamma_group_name` variable
+    `libgamma_group_name` variable.
     '''
     
     def __init__(self):
         '''
-        Constructor
+        Constructor.
         '''
         pass
     
-    def __get__(self, obj, obj_type = None):
+    def __get__(self, obj, obj_type = None) -> str:
         '''
-        Getter
+        Getter.
         '''
-        pass # TODO read libgamma_group_name
+        from libgamma_native_error import libgamma_native_get_group_name
+        return libgamma_native_get_group_name()
     
-    def __set__(self, obj, value):
+    def __set__(self, obj, value : str):
         '''
-        Setter
+        Setter.
         '''
-        pass # TODO write libgamma_group_name
+        from libgamma_native_error import libgamma_native_set_group_name
+        return libgamma_native_set_group_name()
 
 group_name = LibgammaGroupName()
 '''
@@ -83,7 +87,7 @@ cannot be determined.
 '''
 
 
-def perror(name : str, error_code : int): ## TODO call libgamma_perror
+def perror(name : str, error_code : int):
     '''
     Prints an error to stderr in a `perror` fashion,
     however this function will not translate the `libgamma`
@@ -101,10 +105,21 @@ def perror(name : str, error_code : int): ## TODO call libgamma_perror
     @param  name   The text to add at the beginning.
     @param  value  The error code, may be an `errno` value.
     '''
-    pass
+    from libgamma_native_error import libgamma_native_perror
+    libgamma_native_perror(name, error_code)
 
 
-def name_of_error(value : int) -> str: ## TODO call libgamma_name_of_error
+def get_errno() -> int:
+    '''
+    Get the current value, for the current thread, of `errno`.
+    
+    @return  The value `errno`.
+    '''
+    from libgamma_native_error import libgamma_native_get_errno
+    return libgamma_native_get_errno()
+
+
+def name_of_error(value : int) -> str:
     '''
     Returns the name of the definition associated with a `libgamma` error code.
     
@@ -113,18 +128,20 @@ def name_of_error(value : int) -> str: ## TODO call libgamma_name_of_error
                     `None` if the error code does not exist. The return string
                     should not be `free`:d.
     '''
-    pass
+    from libgamma_native_error import libgamma_native_name_of_error
+    return libgamma_native_name_of_error(value)
 
 
-def value_of_error(name : str) -> int: ## TODO call libgamma_value_of_error
+def value_of_error(name : str) -> int:
     '''
     Return the value of a `libgamma` error definition refered to by name.
     
     @param   name  The name of the definition associated with the error code.
-    @return        The error code, zero if the name does is `None`
+    @return        The error code, zero if the name is `None`
                    or does not refer to a `libgamma` error.
     '''
-    pass
+    from libgamma_native_error import libgamma_native_value_of_error
+    return libgamma_native_value_of_error(name)
 
 
 

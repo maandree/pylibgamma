@@ -13,4 +13,5 @@ __pycache__/
 *.su
 *.gch
 *.py[co]
+src/*_native_*.c
 
