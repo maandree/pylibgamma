@@ -515,25 +515,27 @@ The number of `LIBGAMMA_CRTC_INFO_*` values defined.
 
 
 
+LIBGAMMA_CRTC_INFO_MACRO_EDID_VIEWPORT = LIBGAMMA_CRTC_INFO_WIDTH_MM_EDID |
+                                         LIBGAMMA_CRTC_INFO_HEIGHT_MM_EDID
 '''
 Macro for both `CRTCInformation` fields
 that can specify the size of the monitor's viewport
 as specified in the monitor's Extended Display
 Information Data.
 '''
-LIBGAMMA_CRTC_INFO_MACRO_EDID_VIEWPORT = LIBGAMMA_CRTC_INFO_WIDTH_MM_EDID |
-                                         LIBGAMMA_CRTC_INFO_HEIGHT_MM_EDID
 
+LIBGAMMA_CRTC_INFO_MACRO_EDID = LIBGAMMA_CRTC_INFO_EDID |
+				LIBGAMMA_CRTC_INFO_MACRO_EDID_VIEWPORT |
+				LIBGAMMA_CRTC_INFO_GAMMA
 '''
 Macro for all `CRTCInformation` fields
 that can be filled if the adjustment method have
 support for reading the monitors' Extended Display
 Information Data.
 '''
-LIBGAMMA_CRTC_INFO_MACRO_EDID = LIBGAMMA_CRTC_INFO_EDID |
-				LIBGAMMA_CRTC_INFO_MACRO_EDID_VIEWPORT |
-				LIBGAMMA_CRTC_INFO_GAMMA
 
+LIBGAMMA_CRTC_INFO_MACRO_VIEWPORT = LIBGAMMA_CRTC_INFO_WIDTH_MM |
+                                    LIBGAMMA_CRTC_INFO_HEIGHT_MM
 '''
 Macro for both `CRTCInformation` fields
 that can specify the size of the monitor's viewport
@@ -541,32 +543,30 @@ as provided by the adjustment method without this
 library having to parse the monitor's Extended Display
 Information Data.
 '''
-LIBGAMMA_CRTC_INFO_MACRO_VIEWPORT = LIBGAMMA_CRTC_INFO_WIDTH_MM |
-                                    LIBGAMMA_CRTC_INFO_HEIGHT_MM
 
+LIBGAMMA_CRTC_INFO_MACRO_RAMP = LIBGAMMA_CRTC_INFO_GAMMA_SIZE |
+                                LIBGAMMA_CRTC_INFO_GAMMA_DEPTH
 '''
 Macro for the `CRTCInformation` fields
 that specifies the CRTC's gamma ramp sizes and gamma
 ramp depth.
 '''
-LIBGAMMA_CRTC_INFO_MACRO_RAMP = LIBGAMMA_CRTC_INFO_GAMMA_SIZE |
-                                LIBGAMMA_CRTC_INFO_GAMMA_DEPTH
 
+LIBGAMMA_CRTC_INFO_MACRO_CONNECTOR = LIBGAMMA_CRTC_INFO_CONNECTOR_NAME |
+                                     LIBGAMMA_CRTC_INFO_CONNECTOR_TYPE
 '''
 Macro for the `CRTCInformation` fields
 that specifies the CRTC's connector type and the
 partition unique name of the connector.
 '''
-LIBGAMMA_CRTC_INFO_MACRO_CONNECTOR = LIBGAMMA_CRTC_INFO_CONNECTOR_NAME |
-                                     LIBGAMMA_CRTC_INFO_CONNECTOR_TYPE
 
+LIBGAMMA_CRTC_INFO_MACRO_ACTIVE = LIBGAMMA_CRTC_INFO_MACRO_EDID |
+				  LIBGAMMA_CRTC_INFO_MACRO_VIEWPORT |
+				  LIBGAMMA_CRTC_INFO_SUBPIXEL_ORDER |
+				  LIBGAMMA_CRTC_INFO_ACTIVE
 '''
 Macro for the `CRTCInformation` fields
 that required there is a monitor attached to the connector,
 and that status itself.
 '''
-LIBGAMMA_CRTC_INFO_MACRO_ACTIVE = LIBGAMMA_CRTC_INFO_MACRO_EDID |
-				  LIBGAMMA_CRTC_INFO_MACRO_VIEWPORT |
-				  LIBGAMMA_CRTC_INFO_SUBPIXEL_ORDER |
-				  LIBGAMMA_CRTC_INFO_ACTIVE
 
