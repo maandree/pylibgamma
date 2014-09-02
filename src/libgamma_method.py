@@ -713,6 +713,19 @@ class GammaRamps:
                     if indices < 0:
                         indices += self.__size
                     self.__set(self.__ramp, indices, values)
+            
+            def map(self, function):
+                '''
+                Modify the entire ramp using a function that
+                maps encoding value to output value.
+                
+                @param  function:(float)→int|float  Function that takes the encoding value as a
+                                                    [0, 1] floating point and returns its output
+                                                    value as the format using in the gamma ramp.
+                '''
+                max_i = self.__size - 1
+                for i in range(self.__size):
+                    self.__set(self.__ramp, i, function(i / max_i))
         
         self.red   = Ramp(red,   red_size,   depth)
         self.green = Ramp(green, green_size, depth)
