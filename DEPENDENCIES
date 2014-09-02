@@ -1,12 +1,12 @@
 RUNTIME DEPENDENCIES:
 
 	python3
-	libgamma
+	libgamma>=0.3
 
 
 BUILD DEPENDENCIES:
 
-	libgamma
+	libgamma>=0.3
 	make
 	c99
 	cython
