@@ -6,6 +6,7 @@ RUNTIME DEPENDENCIES:
 
 BUILD DEPENDENCIES:
 
+	python3
 	libgamma>=0.3
 	make
 	c99

@@ -24,6 +24,18 @@ LICENSEDIR ?= $(DATADIR)/licenses
 # The target and host platform
 PLATFORM = posix
 
+# The major version number of the current Python installation
+PY_MAJOR = 3
+# The minor version number of the current Python installation
+PY_MINOR = 4
+# The version number of the current Python installation without a dot
+PY_VER = $(PY_MAJOR)$(PY_MINOR)
+# The version number of the current Python installation with a dot
+PY_VERSION = $(PY_MAJOR).$(PY_MINOR)
+
+# The name of the package as it should be installed
+PKGNAME = pylibgamma
+
 
 # The installed pkg-config command
 PKGCONFIG ?= pkg-config
@@ -50,8 +62,18 @@ LD_FLAGS = $$($(PKGCONFIG) --libs $(LIBS)) -lgamma -std=$(STD) \
            $(OPTIMISE) -shared $(LDFLAGS)
 
 
-.PHONY: all
-all: $(foreach M,error facade method,bin/libgamma_native_$(M).so)
+# The suffixless basename of the .py-files
+PYTHON_SRC = libgamma_error libgamma_facade libgamma_method libgamma
+
+# The suffixless basename of the .py-files
+CYTHON_SRC = libgamma_native_error libgamma_native_facade libgamma_native_method
+
+
+.PHONY: all pyx-files py-files
+all: pyc-files pyo-files so-files
+pyc-files: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyc)
+pyo-files: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyo)
+so-files: $(foreach M,$(CYTHON_SRC),bin/$(M).so)
 
 bin/%.so: obj/%.o
 	@mkdir -p bin
@@ -81,8 +103,14 @@ obj/libgamma_native_error.pyx: src/libgamma_native_error.pyx
 	cp $< $@
 endif
 
+src/__pycache__/%.cpython-$(PY_VER).pyc: src/%.py
+	python -m compileall $<
+
+src/__pycache__/%.cpython-$(PY_VER).pyo: src/%.py
+	python -OO -m compileall $<
+
 
 .PHONY: clean
 clean:
-	-rm -r obj bin
+	-rm -r obj bin src/__pycache__
 
