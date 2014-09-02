@@ -876,26 +876,47 @@ def libgamma_native_method_default_site_variable(method : int) -> str:
 
 
 
-#def int libgamma_native_site_initialise(libgamma_site_state_t* this, int method, char* site)
-'''
-Initialise an allocated site state.
-
-@param   this    The site state to initialise.
-@param   method  The adjustment method (display server and protocol.)
-@param   site    The site identifier, unless it is `NULL` it must a
-                 `free`:able. One the state is destroyed the library
-                 will attempt to free it. There you should not free
-                 it yourself, and it must not be a string constant
-                 or allocate on the stack. Note however that it will
-                 not be `free`:d if this function fails.
-@return          Zero on success, otherwise (negative) the value of an
-                 error identifier provided by this library.
-'''
-
-
-def void libgamma_native_site_destroy(this : int):
+def libgamma_native_site_create(method : int, site : str) -> tuple:
     '''
-    Release all resources held by a site state.
+    Create an allocated site state.
+    
+    @param   method                       The adjustment method (display server and protocol.)
+    @param   site                         The site identifier, unless it is `NULL` it must a
+                                          `free`:able. One the state is destroyed the library
+                                          will attempt to free it. There you should not free
+                                          it yourself, and it must not be a string constant
+                                          or allocate on the stack. Note however that it will
+                                          not be `free`:d if this function fails.
+    @return  :(site:int, partitions:int)  First value:   The created site, zero on error
+                                          Second value:  The number of partitions in the site, -1 on error
+    '''
+    cdef libgamma_site_state_t* this
+    cdef char* site_
+    cdef size_t this_address
+    this = <libgamma_site_state_t*>malloc(sizeof(libgamma_site_state_t))
+    if this is NULL:
+        raise MemoryError()
+    this_address = <size_t><void*>this
+    site_ = NULL
+    if site is not None:
+        site_bs = site.encode('utf-8') + bytes([0])
+        site_ = <char*>malloc(len(site_bs) * sizeof(char))
+        if site_ is None:
+            free(this)
+            raise MemoryError()
+        for i in range(len(site_bs)):
+            site_[i] = <char>(site_bs[i])
+    r = int(libgamma_site_initialise(this, <int>method, site_))
+    if r < 0:
+        libgamma_site_free(this)
+        return (0, -1)
+    return (int(this_address), int(this.partitions_available))
+
+
+def libgamma_native_site_free(this : int):
+    '''
+    Release all resources held by a site state
+    and free the CRTC state pointer.
     
     @param  this  The site state.
     '''
@@ -906,7 +927,7 @@ def void libgamma_native_site_destroy(this : int):
     libgamma_site_free(this_)
 
 
-def int libgamma_native_site_restore(this : int) -> int:
+def libgamma_native_site_restore(this : int) -> int:
     '''
     Restore the gamma ramps all CRTC:s with a site to the system settings.
     
@@ -922,16 +943,30 @@ def int libgamma_native_site_restore(this : int) -> int:
 
 
 
-#def int libgamma_native_partition_initialise(libgamma_partition_state_t* this, libgamma_site_state_t* site, size_t partition)
-'''
-Initialise an allocated partition state.
-
-@param   this       The partition state to initialise.
-@param   site       The site state for the site that the partition belongs to.
-@param   partition  The index of the partition within the site.
-@return             Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
-'''
+def libgamma_native_partition_create(site : int, partition : int) -> tuple:
+    '''
+    Create an allocated partition state.
+    
+    @param   site                         The site state for the site that the partition belongs to.
+    @param   partition                    The index of the partition within the site.
+    @return  :(site:int, partitions:int)  First value:   The created partition, zero on error
+                                          Second value:  The number of CRTC:s in the partition, -1 on error
+    '''
+    cdef libgamma_partition_state_t* this
+    cdef libgamma_site_state_t* site_
+    cdef size_t this_address
+    cdef size_t site_address
+    site_address = <size_t>site
+    site_ = <libgamma_site_state_t*><void*>site_address
+    this = <libgamma_partition_state_t*>malloc(sizeof(libgamma_partition_state_t))
+    if this is NULL:
+        raise MemoryError()
+    this_address = <size_t><void*>this
+    r = int(libgamma_partition_initialise(this, site_, <size_t>partition))
+    if r < 0:
+        libgamma_partition_free(this)
+        return (0, -1)
+    return (int(this_address), int(this.crtcs_available))
 
 
 def libgamma_native_partition_free(this : int):
@@ -964,16 +999,29 @@ def libgamma_native_partition_restore(this : int) -> int:
 
 
 
-#def int libgamma_native_crtc_initialise(libgamma_crtc_state_t* this, libgamma_partition_state_t* partition, size_t crtc)
-'''
-Initialise an allocated CRTC state.
-
-@param   this       The CRTC state to initialise.
-@param   partition  The partition state for the partition that the CRTC belongs to.
-@param   crtc       The index of the CRTC within the partition.
-@return             Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
-'''
+def libgamma_native_crtc_create(partition : int, crtc : int) -> int:
+    '''
+    Create an allocated CRTC state.
+    
+    @param   partition  The partition state for the partition that the CRTC belongs to.
+    @param   crtc       The index of the CRTC within the partition.
+    @return             The created CRTC, zero on error
+    '''
+    cdef libgamma_crtc_state_t* this
+    cdef libgamma_partition_state_t* partition_
+    cdef size_t this_address
+    cdef size_t partition_address
+    partition_address = <size_t>partition
+    partition_ = <libgamma_partition_state_t*><void*>partition_address
+    this = <libgamma_crtc_state_t*>malloc(sizeof(libgamma_crtc_state_t))
+    if this is NULL:
+        raise MemoryError()
+    this_address = <size_t><void*>this
+    r = int(libgamma_crtc_initialise(this, partition_, <size_t>crtc))
+    if r < 0:
+        libgamma_crtc_free(this)
+        return 0
+    return int(this_address)
 
 
 def libgamma_native_crtc_free(this : int):
@@ -1061,7 +1109,7 @@ def libgamma_native_get_crtc_information(crtc : int, fields : int) -> tuple:
     rc.append(float(info.gamma_green))
     rc.append(float(info.gamma_blue))
     rc.append(int(info.gamma_error))
-    libgamma_get_crtc_destroy(&info)
+    libgamma_crtc_information_destroy(&info)
     return (rc, r)
 
 
