@@ -30,7 +30,7 @@ print()
 
 print(repr(libgamma.method_default_site_variable(method)))
 print(repr(libgamma.method_default_site(method)))
-print
+print()
 
 print(repr(libgamma.unhex_edid('0123456789ABCDEF')))
 print(repr(libgamma.unhex_edid('0123456789abcdef')))
