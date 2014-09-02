@@ -15,5 +15,4 @@ __pycache__/
 *.gch
 *.py[co]
 src/*_native_*.c
-src/c.c
 

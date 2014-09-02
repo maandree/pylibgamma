@@ -780,7 +780,7 @@ class GammaRamps:
         else:
             raise ValueError('invalid gamma ramp depth')
         if isinstance(ramp_struct, int):
-            import c
+            import libgamma_native_error as c
             error = OSError()
             error.errno = ramp_struct
             error.strerror = c.strerror(error.errno)

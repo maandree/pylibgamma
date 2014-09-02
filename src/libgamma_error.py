@@ -464,7 +464,7 @@ def create_error(error_code : int) -> Exception:
         error_code = ctypes.get_errno()
     
     if error_code >= 0:
-        import c
+        import libgamma_native_error as c
         e = OSError()
         e.errno = error_code
         e.strerror = c.strerror(e.errno)

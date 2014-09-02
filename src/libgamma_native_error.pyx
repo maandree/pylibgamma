@@ -20,6 +20,7 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 cimport cython
 
 from posix.unistd cimport gid_t
+from libc.string cimport strerror as c_strerror
 
 
 cdef extern gid_t libgamma_group_gid
@@ -184,3 +185,17 @@ def libgamma_native_value_of_error(name : str) -> int:
     bs = name.encode('utf-8') + bytes([0])
     return int(libgamma_value_of_error(bs))
     
+
+def strerror(error : int) -> str:
+    '''
+    Get a textual description of an error.
+    
+    @param   error  The number of the error.
+    @return         The description of the error.
+    '''
+    cdef const char* text
+    cdef bytes bs
+    text = c_strerror(<int>error)
+    bs = text
+    return bs.decode('utf-8', 'strict')
+
