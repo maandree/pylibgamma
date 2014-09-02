@@ -548,7 +548,7 @@ The number of `LIBGAMMA_CRTC_INFO_*` values defined.
 
 
 
-LIBGAMMA_CRTC_INFO_MACRO_EDID_VIEWPORT = LIBGAMMA_CRTC_INFO_WIDTH_MM_EDID |
+LIBGAMMA_CRTC_INFO_MACRO_EDID_VIEWPORT = LIBGAMMA_CRTC_INFO_WIDTH_MM_EDID | \
                                          LIBGAMMA_CRTC_INFO_HEIGHT_MM_EDID
 '''
 Macro for both `CRTCInformation` fields
@@ -557,8 +557,8 @@ as specified in the monitor's Extended Display
 Information Data.
 '''
 
-LIBGAMMA_CRTC_INFO_MACRO_EDID = LIBGAMMA_CRTC_INFO_EDID |
-				LIBGAMMA_CRTC_INFO_MACRO_EDID_VIEWPORT |
+LIBGAMMA_CRTC_INFO_MACRO_EDID = LIBGAMMA_CRTC_INFO_EDID | \
+				LIBGAMMA_CRTC_INFO_MACRO_EDID_VIEWPORT | \
 				LIBGAMMA_CRTC_INFO_GAMMA
 '''
 Macro for all `CRTCInformation` fields
@@ -567,7 +567,7 @@ support for reading the monitors' Extended Display
 Information Data.
 '''
 
-LIBGAMMA_CRTC_INFO_MACRO_VIEWPORT = LIBGAMMA_CRTC_INFO_WIDTH_MM |
+LIBGAMMA_CRTC_INFO_MACRO_VIEWPORT = LIBGAMMA_CRTC_INFO_WIDTH_MM | \
                                     LIBGAMMA_CRTC_INFO_HEIGHT_MM
 '''
 Macro for both `CRTCInformation` fields
@@ -577,7 +577,7 @@ library having to parse the monitor's Extended Display
 Information Data.
 '''
 
-LIBGAMMA_CRTC_INFO_MACRO_RAMP = LIBGAMMA_CRTC_INFO_GAMMA_SIZE |
+LIBGAMMA_CRTC_INFO_MACRO_RAMP = LIBGAMMA_CRTC_INFO_GAMMA_SIZE | \
                                 LIBGAMMA_CRTC_INFO_GAMMA_DEPTH
 '''
 Macro for the `CRTCInformation` fields
@@ -585,7 +585,7 @@ that specifies the CRTC's gamma ramp sizes and gamma
 ramp depth.
 '''
 
-LIBGAMMA_CRTC_INFO_MACRO_CONNECTOR = LIBGAMMA_CRTC_INFO_CONNECTOR_NAME |
+LIBGAMMA_CRTC_INFO_MACRO_CONNECTOR = LIBGAMMA_CRTC_INFO_CONNECTOR_NAME | \
                                      LIBGAMMA_CRTC_INFO_CONNECTOR_TYPE
 '''
 Macro for the `CRTCInformation` fields
@@ -593,9 +593,9 @@ that specifies the CRTC's connector type and the
 partition unique name of the connector.
 '''
 
-LIBGAMMA_CRTC_INFO_MACRO_ACTIVE = LIBGAMMA_CRTC_INFO_MACRO_EDID |
-				  LIBGAMMA_CRTC_INFO_MACRO_VIEWPORT |
-				  LIBGAMMA_CRTC_INFO_SUBPIXEL_ORDER |
+LIBGAMMA_CRTC_INFO_MACRO_ACTIVE = LIBGAMMA_CRTC_INFO_MACRO_EDID | \
+				  LIBGAMMA_CRTC_INFO_MACRO_VIEWPORT | \
+				  LIBGAMMA_CRTC_INFO_SUBPIXEL_ORDER | \
 				  LIBGAMMA_CRTC_INFO_ACTIVE
 '''
 Macro for the `CRTCInformation` fields
@@ -609,6 +609,147 @@ class GammaRamps:
     '''
     Gamma ramp structure.
     '''
+        
+    class Ramp:
+        '''
+        A gamma ramp for one single channel.
+        '''
+        
+        def __init__(self, ramp, size : int, depth : int):
+            '''
+            Constructor.
+            
+            @param  ramp   The gamma ramp.
+            @param  size   The number of stops in the gamma ramp.
+            @param  depth  The depth of the gamma ramp.
+            '''
+            from libgamma_native_method import libgamma_native_gamma_ramps8_get
+            from libgamma_native_method import libgamma_native_gamma_ramps16_get
+            from libgamma_native_method import libgamma_native_gamma_ramps32_get
+            from libgamma_native_method import libgamma_native_gamma_ramps64_get
+            from libgamma_native_method import libgamma_native_gamma_rampsf_get
+            from libgamma_native_method import libgamma_native_gamma_rampsd_get
+            from libgamma_native_method import libgamma_native_gamma_ramps8_set
+            from libgamma_native_method import libgamma_native_gamma_ramps16_set
+            from libgamma_native_method import libgamma_native_gamma_ramps32_set
+            from libgamma_native_method import libgamma_native_gamma_ramps64_set
+            from libgamma_native_method import libgamma_native_gamma_rampsf_set
+            from libgamma_native_method import libgamma_native_gamma_rampsd_set
+            self._size = size
+            self._ramp = ramp
+            if   depth ==  8:  fs = (libgamma_native_gamma_ramps8_get,  libgamma_native_gamma_ramps8_set)
+            elif depth == 16:  fs = (libgamma_native_gamma_ramps16_get, libgamma_native_gamma_ramps16_set)
+            elif depth == 32:  fs = (libgamma_native_gamma_ramps32_get, libgamma_native_gamma_ramps32_set)
+            elif depth == 64:  fs = (libgamma_native_gamma_ramps64_get, libgamma_native_gamma_ramps64_set)
+            elif depth == -1:  fs = (libgamma_native_gamma_rampsf_get,  libgamma_native_gamma_rampsf_set)
+            elif depth == -2:  fs = (libgamma_native_gamma_rampsd_get,  libgamma_native_gamma_rampsd_set)
+            (self._get, self._set) = fs
+        
+        
+        @property
+        def size(self) -> int:
+            '''
+            Get the number of stops in the gamma ramp.
+            
+            @return  The number of stops in the gamma ramp.
+            '''
+            return self._size
+        
+        @size.setter
+        def size(self, value : int):
+            '''
+            It is not possible to change this attribute, but a setter is
+            required for the getter to function.
+            '''
+            raise AttributeError('cannot resize ramp')
+            
+        def __len__(self) -> int:
+            '''
+            Get the number of stops in the gamma ramp.
+            
+            @return  The number of stops in the gamma ramp.
+            '''
+            return self._size
+        
+        def __getitem__(self, indices):
+            '''
+            Read the gamma ramp.
+            
+            @param   indices:slice     The stops to read.
+            @return  :list<int|float>  The values of the read stops.
+            
+            -- OR --
+            
+            @param   indices:int  The index of the stop to read.
+            @return  :int|float   The value of the read stop.
+            '''
+            if isinstance(indices, slice):
+                start = indices.start
+                stop = indices.stop
+                step = indices.step
+                if start is None:  start = 0
+                elif start < 0:    start += self._size
+                if stop is None:   stop = self._size
+                elif stop < 0:     stop += self._size
+                if step is None:   step = 1
+                return [self._get(self._ramp, i) for i in range(start, stop, step)]
+            else:
+                if indices < 0:
+                    indices += self._size
+                return self._get(self._ramp, indices)
+        
+        def __setitem__(self, indices, values):
+            '''
+            Modify the gamma ramp.
+            
+            @param  indices:slice          The stops to modify.
+            @param  values:itr<int|float>  The values for the selected stops.
+            
+            -- OR --
+            
+            @param  indices:int        The index of the stop to modify.
+            @param  values:int|float   The new value for the stop.
+            '''
+            if isinstance(indices, slice):
+                start = indices.start
+                stop = indices.stop
+                step = indices.step
+                if start is None:  start = 0
+                elif start < 0:    start += self._size
+                if stop is None:   stop = self._size
+                elif stop < 0:     stop += self._size
+                if step is None:   step = 1
+                indices = list(range(start, stop, step))
+                if not len(indices) == len(values):
+                    raise ValueError('cannot resize ramp')
+                for index, value in zip(indices, values):
+                    self._set(self._ramp, index, value)
+            else:
+                if indices < 0:
+                    indices += self._size
+                self._set(self._ramp, indices, values)
+        
+        def __iter__(self) -> iter:
+            '''
+            Read the gamma ramp.
+            
+            @return  :itr<int|float>  The values of each stop.
+            '''
+            for value in self[:]:
+                yield value
+        
+        def map(self, function):
+            '''
+            Modify the entire ramp using a function that
+            maps encoding value to output value.
+            
+            @param  function:(float)→int|float  Function that takes the encoding value as a
+            [0, 1] floating point and returns its output
+            value as the format using in the gamma ramp.
+            '''
+            max_i = self._size - 1
+            for i in range(self._size):
+                self._set(self._ramp, i, function(i / max_i))
     
     def __init__(self, red_size : int, green_size : int = ..., blue_size : int = ..., *, depth : int = 16):
         '''
@@ -622,159 +763,110 @@ class GammaRamps:
         if green_size is ...:  green_size = red_size
         if blue_size is ...:   blue_size = green_size
         
-        self.__depth = depth
-        if depth not in (8, 16, 32, 64, -1, -2):
-            raise ValueError('invalid gamma ramp depth')
+        self._depth = depth
         
+        from libgamma_native_method import libgamma_native_gamma_ramps8_create
+        from libgamma_native_method import libgamma_native_gamma_ramps16_create
+        from libgamma_native_method import libgamma_native_gamma_ramps32_create
+        from libgamma_native_method import libgamma_native_gamma_ramps64_create
+        from libgamma_native_method import libgamma_native_gamma_rampsf_create
+        from libgamma_native_method import libgamma_native_gamma_rampsd_create
         if   depth ==  8:  ramp_struct = libgamma_native_gamma_ramps8_create (red_size, green_size, blue_size)
         elif depth == 16:  ramp_struct = libgamma_native_gamma_ramps16_create(red_size, green_size, blue_size)
         elif depth == 32:  ramp_struct = libgamma_native_gamma_ramps32_create(red_size, green_size, blue_size)
         elif depth == 64:  ramp_struct = libgamma_native_gamma_ramps64_create(red_size, green_size, blue_size)
         elif depth == -1:  ramp_struct = libgamma_native_gamma_rampsf_create (red_size, green_size, blue_size)
         elif depth == -2:  ramp_struct = libgamma_native_gamma_rampsd_create (red_size, green_size, blue_size)
+        else:
+            raise ValueError('invalid gamma ramp depth')
         if isinstance(ramp_struct, int):
             import c
             error = OSError()
             error.errno = ramp_struct
             error.strerror = c.strerror(error.errno)
             raise error
-        (self.__ramps, red, green, blue) = ramp_struct
+        (self._ramps, red, green, blue) = ramp_struct
         
-        class Ramp:
-            '''
-            A gamma ramp for one single channel.
-            '''
-            
-            def __init__(self, ramp, size : int, depth : int):
-                '''
-                Constructor.
-                
-                @param  ramp   The gamma ramp.
-                @param  size   The number of stops in the gamma ramp.
-                @param  depth  The depth of the gamma ramp.
-                '''
-                self.__size = size
-                self.__ramp = ramp
-                if   depth ==  8:  fs = (libgamma_native_gamma_ramps8_get,  libgamma_native_gamma_ramps8_set)
-                elif depth == 16:  fs = (libgamma_native_gamma_ramps16_get, libgamma_native_gamma_ramps16_set)
-                elif depth == 32:  fs = (libgamma_native_gamma_ramps32_get, libgamma_native_gamma_ramps32_set)
-                elif depth == 64:  fs = (libgamma_native_gamma_ramps64_get, libgamma_native_gamma_ramps64_set)
-                elif depth == -1:  fs = (libgamma_native_gamma_rampsf_get,  libgamma_native_gamma_rampsf_set)
-                elif depth == -2:  fs = (libgamma_native_gamma_rampsd_get,  libgamma_native_gamma_rampsd_set)
-                (self.__get, self.__set) = fs
-            
-            
-            @property
-            def size(self) -> int:
-                '''
-                Get the number of stops in the gamma ramp.
-                
-                @return  The number of stops in the gamma ramp.
-                '''
-                return self.__size
-            
-            @size.setter
-            def size(self, value : int):
-                '''
-                It is not possible to change this attribute, but a setter is
-                required for the getter to function.
-                '''
-                raise AttributeError('cannot resize ramp')
-            
-            def __len__(self) -> int:
-                '''
-                Get the number of stops in the gamma ramp.
-                
-                @return  The number of stops in the gamma ramp.
-                '''
-                return self.__size
-            
-            def __getitem__(self, indices):
-                '''
-                Read the gamma ramp.
-                
-                @param   indices:slice     The stops to read.
-                @return  :list<int|float>  The values of the read stops.
-                
-                -- OR --
-                
-                @param   indices:int  The index of the stop to read.
-                @return  :int|float   The value of the read stop.
-                '''
-                if isinstance(indices, slice):
-                    start = indices.start
-                    stop = indices.stop
-                    step = indices.step
-                    if start is None:  start = 0
-                    elif start < 0:    start += self.__size
-                    if stop is None:   stop = self.__size
-                    elif stop < 0:     stop += self.__size
-                    if step is None:   step = 1
-                    return [self.__get(self.__ramp, i) for i in range(start, stop, step)]
-                else:
-                    if indices < 0:
-                        indices += self.__size
-                    return self.__get(self.__ramp, indices)
-            
-            def __setitem__(self, indices, values):
-                '''
-                Modify the gamma ramp.
-                
-                @param  indices:slice          The stops to modify.
-                @param  values:itr<int|float>  The values for the selected stops.
-                
-                -- OR --
-                
-                @param  indices:int        The index of the stop to modify.
-                @param  values:int|float   The new value for the stop.
-                '''
-                if isinstance(indices, slice):
-                    start = indices.start
-                    stop = indices.stop
-                    step = indices.step
-                    if start is None:  start = 0
-                    elif start < 0:    start += self.__size
-                    if stop is None:   stop = self.__size
-                    elif stop < 0:     stop += self.__size
-                    if step is None:   step = 1
-                    indices = list(range(start, stop, step))
-                    if not len(indices) == len(values):
-                        raise ValueError('cannot resize ramp')
-                    for index, value in zip(indices, values):
-                        self.__set(self.__ramp, index, value)
-                else:
-                    if indices < 0:
-                        indices += self.__size
-                    self.__set(self.__ramp, indices, values)
-            
-            def map(self, function):
-                '''
-                Modify the entire ramp using a function that
-                maps encoding value to output value.
-                
-                @param  function:(float)→int|float  Function that takes the encoding value as a
-                                                    [0, 1] floating point and returns its output
-                                                    value as the format using in the gamma ramp.
-                '''
-                max_i = self.__size - 1
-                for i in range(self.__size):
-                    self.__set(self.__ramp, i, function(i / max_i))
-        
-        self.red   = Ramp(red,   red_size,   depth)
-        self.green = Ramp(green, green_size, depth)
-        self.blue  = Ramp(blue,  blue_size,  depth)
+        self._red   = GammaRamps.Ramp(red,   red_size,   depth)
+        self._green = GammaRamps.Ramp(green, green_size, depth)
+        self._blue  = GammaRamps.Ramp(blue,  blue_size,  depth)
     
     
     def __del__(self):
         '''
         This function is called when the object is not longer in use.
         '''
-        if   self.__depth ==  8:  libgamma_native_gamma_ramps8_free(self.__ramps)
-        elif self.__depth == 16:  libgamma_native_gamma_ramps16_free(self.__ramps)
-        elif self.__depth == 32:  libgamma_native_gamma_ramps32_free(self.__ramps)
-        elif self.__depth == 64:  libgamma_native_gamma_ramps64_free(self.__ramps)
-        elif self.__depth == -1:  libgamma_native_gamma_rampsf_free(self.__ramps)
-        elif self.__depth == -2:  libgamma_native_gamma_rampsd_free(self.__ramps)
+        from libgamma_native_method import libgamma_native_gamma_ramps8_free
+        from libgamma_native_method import libgamma_native_gamma_ramps16_free
+        from libgamma_native_method import libgamma_native_gamma_ramps32_free
+        from libgamma_native_method import libgamma_native_gamma_ramps64_free
+        from libgamma_native_method import libgamma_native_gamma_rampsf_free
+        from libgamma_native_method import libgamma_native_gamma_rampsd_free
+        if self._ramps == 0:
+            return
+        if   self._depth ==  8:  libgamma_native_gamma_ramps8_free(self._ramps)
+        elif self._depth == 16:  libgamma_native_gamma_ramps16_free(self._ramps)
+        elif self._depth == 32:  libgamma_native_gamma_ramps32_free(self._ramps)
+        elif self._depth == 64:  libgamma_native_gamma_ramps64_free(self._ramps)
+        elif self._depth == -1:  libgamma_native_gamma_rampsf_free(self._ramps)
+        elif self._depth == -2:  libgamma_native_gamma_rampsd_free(self._ramps)
+    
+    
+    @property
+    def red(self) -> Ramp:
+        '''
+        Get the gamma ramp for the red channel.
+        
+        @return  The gamma ramp for the red channel.
+        '''
+        return self._red
+    
+    
+    @red.setter
+    def red(self, value):
+        '''
+        It is not possible to change this attribute, but a setter is
+        required for the getter to function.
+        '''
+        raise AttributeError('cannot change ramps')
+    
+    
+    @property
+    def green(self) -> Ramp:
+        '''
+        Get the gamma ramp for the green channel.
+        
+        @return  The gamma ramp for the green channel.
+        '''
+        return self._green
+    
+    
+    @green.setter
+    def green(self, value) -> Ramp:
+        '''
+        It is not possible to change this attribute, but a setter is
+        required for the getter to function.
+        '''
+        raise AttributeError('cannot change ramps')
+    
+    
+    @property
+    def blue(self):
+        '''
+        Get the gamma ramp for the blue channel.
+        
+        @return  The gamma ramp for the blue channel.
+        '''
+        return self._blue
+    
+    
+    @blue.setter
+    def blue(self, value):
+        '''
+        It is not possible to change this attribute, but a setter is
+        required for the getter to function.
+        '''
+        raise AttributeError('cannot change ramps')
     
     
     @property
@@ -784,7 +876,7 @@ class GammaRamps:
         
         @return  :(red:int, green:int, blue:int)  The size of each individual ramp.
         '''
-        return (self.red.size, self.green.size, self.blue.size)
+        return (self._red.size, self._green.size, self._blue.size)
     
     
     @size.setter
@@ -804,10 +896,10 @@ class GammaRamps:
         @return  :int  The ramps' depth in bits and -1 for single precision floating
                        point and -2 for doublesingle precision floating point
         '''
-        return self.__depth
+        return self._depth
     
     
-    @size.setter
+    @depth.setter
     def depth(self, value):
         '''
         It is not possible to change this attribute, but a setter is
@@ -840,8 +932,8 @@ class Site:
         @param  site:str?   The site identifier
         '''
         from libgamma_native_facade import libgamma_native_site_create
-        (self.__state, n) = libgamma_native_site_create(method, site)
-        if self.__state == 0:
+        (self._state, n) = libgamma_native_site_create(method, site)
+        if self._state == 0:
             raise create_error(n)
         self.partitions_available = n
         self.method = method
@@ -853,7 +945,8 @@ class Site:
         This function is called when the object is not longer in use.
         '''
         from libgamma_native_facade import libgamma_native_site_free
-        libgamma_native_site_free(self.__state)
+        if not self._state == 0:
+            libgamma_native_site_free(self._state)
     
     
     def restore(self):
@@ -861,7 +954,7 @@ class Site:
         Restore the gamma ramps all CRTC:s with the site to the system settings.
         '''
         from libgamma_native_facade import libgamma_native_site_restore
-        r = libgamma_native_site_restore(self.__state)
+        r = libgamma_native_site_restore(self._state)
         if not r == 0:
             raise create_error(r)
 
@@ -892,8 +985,8 @@ class Partition:
         @param  partition  The index of the partition
         '''
         from libgamma_native_facade import libgamma_native_partition_create
-        (self.__state, n) = libgamma_native_partition_create(site, partition)
-        if self.__state == 0:
+        (self._state, n) = libgamma_native_partition_create(site._state, partition)
+        if self._state == 0:
             raise create_error(n)
         self.crtcs_available = n
         self.site = site
@@ -905,7 +998,8 @@ class Partition:
         This function is called when the object is not longer in use.
         '''
         from libgamma_native_facade import libgamma_native_partition_free
-        libgamma_native_partition_free(self.__state)
+        if not self._state == 0:
+            libgamma_native_partition_free(self._state)
     
     
     def restore(self):
@@ -913,7 +1007,7 @@ class Partition:
         Restore the gamma ramps all CRTC:s with the partition to the system settings.
         '''
         from libgamma_native_facade import libgamma_native_partition_restore
-        r = libgamma_native_partition_restore(self.__state)
+        r = libgamma_native_partition_restore(self._state)
         if not r == 0:
             raise create_error(r)
 
@@ -938,8 +1032,8 @@ class CRTC:
         @param  crtc       The index of the CRTC
         '''
         from libgamma_native_facade import libgamma_native_crtc_create
-        (self.__state, n) = libgamma_native_crtc_create(partition, crtc)
-        if self.__state == 0:
+        (self._state, n) = libgamma_native_crtc_create(partition._state, crtc)
+        if self._state == 0:
             raise create_error(n)
         self.partition = partition
         self.crtc = crtc
@@ -950,7 +1044,8 @@ class CRTC:
         This function is called when the object is not longer in use.
         '''
         from libgamma_native_facade import libgamma_native_crtc_free
-        libgamma_native_crtc_free(self.__state)
+        if not self._state == 0:
+            libgamma_native_crtc_free(self._state)
     
     
     def restore(self):
@@ -958,12 +1053,12 @@ class CRTC:
         Restore the gamma ramps for a CRTC to the system settings for that CRTC.
         '''
         from libgamma_native_facade import libgamma_native_crtc_restore
-        r = libgamma_native_crtc_restore(self.__state)
+        r = libgamma_native_crtc_restore(self._state)
         if not r == 0:
             raise create_error(r)
     
     
-    def information(fields : int) -> tuple:
+    def information(self, fields : int) -> tuple:
         '''
         Read information about a CRTC.
         
@@ -973,38 +1068,50 @@ class CRTC:
                                              whether no errors occurred.
         '''
         from libgamma_native_facade import libgamma_native_get_crtc_information
-        (data, e) = libgamma_native_get_crtc_information(self.__state, fields)
+        (data, e) = libgamma_native_get_crtc_information(self._state, fields)
         return (CRTCInformation(data), e == 0)
     
     
-    def get_gamma(ramps : GammaRamps):
+    def get_gamma(self, ramps : GammaRamps):
         '''
         Get the current gamma ramps for the CRTC.
         
         @param  ramps  The gamma ramps to fill with the current values.
         '''
-        if   ramps.depth ==  8:  r = libgamma_native_crtc_get_gamma_ramps8(self.__state, ramps.__ramp)
-        elif ramps.depth == 16:  r = libgamma_native_crtc_get_gamma_ramps16(self.__state, ramps.__ramp)
-        elif ramps.depth == 32:  r = libgamma_native_crtc_get_gamma_ramps32(self.__state, ramps.__ramp)
-        elif ramps.depth == 64:  r = libgamma_native_crtc_get_gamma_ramps64(self.__state, ramps.__ramp)
-        elif ramps.depth == -1:  r = libgamma_native_crtc_get_gamma_rampsf(self.__state, ramps.__ramp)
-        elif ramps.depth == -2:  r = libgamma_native_crtc_get_gamma_rampsd(self.__state, ramps.__ramp)
+        from libgamma_native_facade import libgamma_native_crtc_get_gamma_ramps8
+        from libgamma_native_facade import libgamma_native_crtc_get_gamma_ramps16
+        from libgamma_native_facade import libgamma_native_crtc_get_gamma_ramps32
+        from libgamma_native_facade import libgamma_native_crtc_get_gamma_ramps64
+        from libgamma_native_facade import libgamma_native_crtc_get_gamma_rampsf
+        from libgamma_native_facade import libgamma_native_crtc_get_gamma_rampsd
+        if   ramps.depth ==  8:  r = libgamma_native_crtc_get_gamma_ramps8(self._state, ramps._ramps)
+        elif ramps.depth == 16:  r = libgamma_native_crtc_get_gamma_ramps16(self._state, ramps._ramps)
+        elif ramps.depth == 32:  r = libgamma_native_crtc_get_gamma_ramps32(self._state, ramps._ramps)
+        elif ramps.depth == 64:  r = libgamma_native_crtc_get_gamma_ramps64(self._state, ramps._ramps)
+        elif ramps.depth == -1:  r = libgamma_native_crtc_get_gamma_rampsf(self._state, ramps._ramps)
+        elif ramps.depth == -2:  r = libgamma_native_crtc_get_gamma_rampsd(self._state, ramps._ramps)
         if not r == 0:
             raise create_error(r)
     
     
-    def set_gamma(ramps : GammaRamps):
+    def set_gamma(self, ramps : GammaRamps):
         '''
         Set gamma ramps for the CRTC.
         
         @param  ramps  The gamma ramps to apply.
         '''
-        if   ramps.depth ==  8:  r = libgamma_native_crtc_set_gamma_ramps8(self.__state, ramps.__ramp)
-        elif ramps.depth == 16:  r = libgamma_native_crtc_set_gamma_ramps16(self.__state, ramps.__ramp)
-        elif ramps.depth == 32:  r = libgamma_native_crtc_set_gamma_ramps32(self.__state, ramps.__ramp)
-        elif ramps.depth == 64:  r = libgamma_native_crtc_set_gamma_ramps64(self.__state, ramps.__ramp)
-        elif ramps.depth == -1:  r = libgamma_native_crtc_set_gamma_rampsf(self.__state, ramps.__ramp)
-        elif ramps.depth == -2:  r = libgamma_native_crtc_set_gamma_rampsd(self.__state, ramps.__ramp)
+        from libgamma_native_facade import libgamma_native_crtc_set_gamma_ramps8
+        from libgamma_native_facade import libgamma_native_crtc_set_gamma_ramps16
+        from libgamma_native_facade import libgamma_native_crtc_set_gamma_ramps32
+        from libgamma_native_facade import libgamma_native_crtc_set_gamma_ramps64
+        from libgamma_native_facade import libgamma_native_crtc_set_gamma_rampsf
+        from libgamma_native_facade import libgamma_native_crtc_set_gamma_rampsd
+        if   ramps.depth ==  8:  r = libgamma_native_crtc_set_gamma_ramps8(self._state, ramps._ramps)
+        elif ramps.depth == 16:  r = libgamma_native_crtc_set_gamma_ramps16(self._state, ramps._ramps)
+        elif ramps.depth == 32:  r = libgamma_native_crtc_set_gamma_ramps32(self._state, ramps._ramps)
+        elif ramps.depth == 64:  r = libgamma_native_crtc_set_gamma_ramps64(self._state, ramps._ramps)
+        elif ramps.depth == -1:  r = libgamma_native_crtc_set_gamma_rampsf(self._state, ramps._ramps)
+        elif ramps.depth == -2:  r = libgamma_native_crtc_set_gamma_rampsd(self._state, ramps._ramps)
         if not r == 0:
             raise create_error(r)
 

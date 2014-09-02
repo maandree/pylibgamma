@@ -25,7 +25,7 @@ from libc.stddef cimport size_t
 from libc.errno cimport errno
 
 
-cdef extern from "libgamma/libgamma-method.h":
+cdef extern from "include-libgamma.h":
     ctypedef struct libgamma_gamma_ramps8_t:
         # Gamma ramp structure for 8-bit gamma ramps.
         size_t red_size
@@ -274,11 +274,16 @@ def libgamma_native_gamma_ramps8_create(red_size : int, green_size : int, blue_s
     cdef libgamma_gamma_ramps8_t* item = <libgamma_gamma_ramps8_t*>allocation
     cdef size_t red, green, blue
     if item is NULL:
-        return errno
+        return int(errno)
+    item.red_size   = red_size
+    item.green_size = green_size
+    item.blue_size  = blue_size
+    if libgamma_gamma_ramps8_initialise(item) < 0:
+        return int(errno)
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
     blue  = <size_t><void*>(item.blue)
-    return (int(<size_t>allocation), int(red), int(blue), int(blue))
+    return (int(<size_t>allocation), int(red), int(green), int(blue))
 
 
 def libgamma_native_gamma_ramps8_free(this : int):
@@ -340,11 +345,16 @@ def libgamma_native_gamma_ramps16_create(red_size : int, green_size : int, blue_
     cdef libgamma_gamma_ramps16_t* item = <libgamma_gamma_ramps16_t*>allocation
     cdef size_t red, green, blue
     if item is NULL:
-        return errno
+        return int(errno)
+    item.red_size   = red_size
+    item.green_size = green_size
+    item.blue_size  = blue_size
+    if libgamma_gamma_ramps16_initialise(item) < 0:
+        return int(errno)
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
     blue  = <size_t><void*>(item.blue)
-    return (int(<size_t>allocation), int(red), int(blue), int(blue))
+    return (int(<size_t>allocation), int(red), int(green), int(blue))
 
 
 def libgamma_native_gamma_ramps16_free(this : int):
@@ -406,11 +416,16 @@ def libgamma_native_gamma_ramps32_create(red_size : int, green_size : int, blue_
     cdef libgamma_gamma_ramps32_t* item = <libgamma_gamma_ramps32_t*>allocation
     cdef size_t red, green, blue
     if item is NULL:
-        return errno
+        return int(errno)
+    item.red_size   = red_size
+    item.green_size = green_size
+    item.blue_size  = blue_size
+    if libgamma_gamma_ramps32_initialise(item) < 0:
+        return int(errno)
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
     blue  = <size_t><void*>(item.blue)
-    return (int(<size_t>allocation), int(red), int(blue), int(blue))
+    return (int(<size_t>allocation), int(red), int(green), int(blue))
 
 
 def libgamma_native_gamma_ramps32_free(this : int):
@@ -472,11 +487,16 @@ def libgamma_native_gamma_ramps64_create(red_size : int, green_size : int, blue_
     cdef libgamma_gamma_ramps64_t* item = <libgamma_gamma_ramps64_t*>allocation
     cdef size_t red, green, blue
     if item is NULL:
-        return errno
+        return int(errno)
+    item.red_size   = red_size
+    item.green_size = green_size
+    item.blue_size  = blue_size
+    if libgamma_gamma_ramps64_initialise(item) < 0:
+        return int(errno)
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
     blue  = <size_t><void*>(item.blue)
-    return (int(<size_t>allocation), int(red), int(blue), int(blue))
+    return (int(<size_t>allocation), int(red), int(green), int(blue))
 
 
 def libgamma_native_gamma_ramps64_free(this : int):
@@ -538,11 +558,16 @@ def libgamma_native_gamma_rampsf_create(red_size : int, green_size : int, blue_s
     cdef libgamma_gamma_rampsf_t* item = <libgamma_gamma_rampsf_t*>allocation
     cdef size_t red, green, blue
     if item is NULL:
-        return errno
+        return int(errno)
+    item.red_size   = red_size
+    item.green_size = green_size
+    item.blue_size  = blue_size
+    if libgamma_gamma_rampsf_initialise(item) < 0:
+        return int(errno)
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
     blue  = <size_t><void*>(item.blue)
-    return (int(<size_t>allocation), int(red), int(blue), int(blue))
+    return (int(<size_t>allocation), int(red), int(green), int(blue))
 
 
 def libgamma_native_gamma_rampsf_free(this : int):
@@ -604,11 +629,16 @@ def libgamma_native_gamma_rampsd_create(red_size : int, green_size : int, blue_s
     cdef libgamma_gamma_rampsd_t* item = <libgamma_gamma_rampsd_t*>allocation
     cdef size_t red, green, blue
     if item is NULL:
-        return errno
+        return int(errno)
+    item.red_size   = red_size
+    item.green_size = green_size
+    item.blue_size  = blue_size
+    if libgamma_gamma_rampsd_initialise(item) < 0:
+        return int(errno)
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
     blue  = <size_t><void*>(item.blue)
-    return (int(<size_t>allocation), int(red), int(blue), int(blue))
+    return (int(<size_t>allocation), int(red), int(green), int(blue))
 
 
 def libgamma_native_gamma_rampsd_free(this : int):

@@ -29,7 +29,7 @@ ctypedef int libgamma_subpixel_order_t
 ctypedef int libgamma_connector_type_t
 
 
-cdef extern from "libgamma/libgamma-method.h":
+cdef extern from "include-libgamma.h":
     
     ctypedef struct libgamma_method_capabilities_t:
         # Capabilities of adjustment methods.
@@ -490,7 +490,7 @@ Return the capabilities of an adjustment method.
 
 cdef extern char* libgamma_method_default_site(int method)
 '''
-Return the capabilities of an adjustment method.
+Return the default site for an adjustment method.
 
 @param   method  The adjustment method (display server and protocol.)
 @return          The default site, `NULL` if it cannot be determined or
@@ -501,7 +501,8 @@ Return the capabilities of an adjustment method.
 
 cdef extern const char* libgamma_method_default_site_variable(int method)
 '''
-Return the capabilities of an adjustment method.
+Return the default variable that determines
+the default site for an adjustment method.
 
 @param   method  The adjustment method (display server and protocol.)
 @return          The environ variables that is used to determine the
@@ -846,7 +847,7 @@ def libgamma_native_method_capabilities(method : int) -> tuple:
 
 def libgamma_native_method_default_site(method : int) -> str:
     '''
-    Return the capabilities of an adjustment method.
+    Return the default site for an adjustment method.
     
     @param   method  The adjustment method (display server and protocol.)
     @return          The default site, `None` if it cannot be determined or
@@ -862,7 +863,8 @@ def libgamma_native_method_default_site(method : int) -> str:
 
 def libgamma_native_method_default_site_variable(method : int) -> str:
     '''
-    Return the capabilities of an adjustment method.
+    Return the default variable that determines
+    the default site for an adjustment method.
     
     @param   method  The adjustment method (display server and protocol.)
     @return          The environ variables that is used to determine the

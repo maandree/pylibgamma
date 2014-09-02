@@ -22,7 +22,7 @@ from libgamma_method import MethodCapabilities
 
 
 
-def list_methods(operation : int) -> list
+def list_methods(operation : int) -> list:
     '''
     List available adjustment methods by their order of preference based on the environment.
     
@@ -35,8 +35,8 @@ def list_methods(operation : int) -> list
                          Other values invoke undefined behaviour.
     @return  :list<int>  A list of available adjustment methods.
     '''
-    from libgamma_native_method import libgamma_native_list_methods
-    return libgamma_native_list_methods(method)
+    from libgamma_native_facade import libgamma_native_list_methods
+    return libgamma_native_list_methods(operation)
 
 
 def is_method_available(method : int) -> bool:
@@ -47,7 +47,7 @@ def is_method_available(method : int) -> bool:
     @param   method  The adjustment method.
     @return          Whether the adjustment method is available.
     '''
-    from libgamma_native_method import libgamma_native_is_method_available
+    from libgamma_native_facade import libgamma_native_is_method_available
     return not libgamma_native_is_method_available(method) == 0
 
 
@@ -58,34 +58,35 @@ def method_capabilities(method : int) -> MethodCapabilities:
     @param  this    The data structure to fill with the method's capabilities
     @param  method  The adjustment method (display server and protocol).
     '''
-    from libgamma_native_method import libgamma_native_method_capabilities
+    from libgamma_native_facade import libgamma_native_method_capabilities
     caps = libgamma_native_method_capabilities(method)
-    MethodCapabilities(*caps)
+    return MethodCapabilities(*caps)
 
 
 def method_default_site(method : int) -> str:
     '''
-    Return the capabilities of an adjustment method.
+    Return the default site for an adjustment method.
     
     @param   method  The adjustment method (display server and protocol.)
     @return          The default site, `None` if it cannot be determined or
                      if multiple sites are not supported by the adjustment
                      method.
     '''
-    from libgamma_native_method import libgamma_native_method_default_site
+    from libgamma_native_facade import libgamma_native_method_default_site
     return libgamma_native_method_default_site(method)
 
 
 def method_default_site_variable(method : int) -> str:
     '''
-    Return the capabilities of an adjustment method.
+    Return the default variable that determines
+    the default site for an adjustment method.
     
     @param   method  The adjustment method (display server and protocol.)
     @return          The environ variables that is used to determine the
                      default site. `None` if there is none, that is, if
                      the method does not support multiple sites.
     '''
-    from libgamma_native_method import libgamma_native_method_default_site_variable
+    from libgamma_native_facade import libgamma_native_method_default_site_variable
     return libgamma_native_method_default_site_variable(method)
 
 
@@ -136,7 +137,7 @@ def unhex_edid(edid : str) -> bytes:
     @return        The EDID in raw representation.
     '''
     rc = []
-    edid = edid.lowercase()
+    edid = edid.lower()
     for i in range(0, len(edid), 2):
         a, b = edid[i + 0], edid[i + 1]
         a = '0123456789abcdef'.find(a) << 4

@@ -93,6 +93,7 @@ def libgamma_native_set_group_gid(gid : int):
     Group that the user needs to be a member of if
     `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
     '''
+    global libgamma_group_gid
     libgamma_group_gid = <int>gid
 
 
@@ -120,6 +121,7 @@ def libgamma_native_set_group_name(name : str):
     `None` if the name of the group `libgamma_group_gid`
     cannot be determined.
     '''
+    global libgamma_group_name
     cdef bytes bs
     if name is None:
         libgamma_group_name = <char*>NULL

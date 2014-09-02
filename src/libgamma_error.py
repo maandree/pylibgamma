@@ -19,71 +19,65 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 
 
-class LibgammaGroupGid:
+class LibgammaGroup:
     '''
-    Data descriptor for accessing the
-    `libgamma_group_gid` variable.
+    Class for `group`
     '''
     
-    def __init__(self):
-        '''
-        Constructor.
-        '''
-        pass
-    
-    def __get__(self, obj, obj_type = None) -> int:
+    @property
+    def gid(self) -> int:
         '''
         Getter.
+        
+        Group that the user needs to be a member of if
+        `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
         '''
         from libgamma_native_error import libgamma_native_get_group_gid
         return libgamma_native_get_group_gid()
     
-    def __set__(self, obj, value : int):
+    @gid.setter
+    def gid(self, value : int):
         '''
         Setter.
+        
+        Group that the user needs to be a member of if
+        `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
         '''
         from libgamma_native_error import libgamma_native_set_group_gid
-        return libgamma_native_set_group_gid(value)
-
-group_gid = LibgammaGroupGid()
-'''
-Group that the user needs to be a member of if
-`LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
-'''
-
-
-class LibgammaGroupName:
-    '''
-    Data descriptor for accessing the
-    `libgamma_group_name` variable.
-    '''
+        libgamma_native_set_group_gid(value)
     
-    def __init__(self):
-        '''
-        Constructor.
-        '''
-        pass
     
-    def __get__(self, obj, obj_type = None) -> str:
+    @property
+    def name(self) -> str:
         '''
         Getter.
+        
+        Group that the user needs to be a member of if
+        `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
+        `None` if the name of the group `group.gid`
+        cannot be determined.
         '''
         from libgamma_native_error import libgamma_native_get_group_name
         return libgamma_native_get_group_name()
     
-    def __set__(self, obj, value : str):
+    @name.setter
+    def name(self, value : str):
         '''
         Setter.
+        
+        Group that the user needs to be a member of if
+        `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
+        `None` if the name of the group `group.gid`
+        cannot be determined.
         '''
         from libgamma_native_error import libgamma_native_set_group_name
-        return libgamma_native_set_group_name()
+        libgamma_native_set_group_name(value)
 
-group_name = LibgammaGroupName()
+
+group = LibgammaGroup()
 '''
-Group that the user needs to be a member of if
-`LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
-`None` if the name of the group `group_gid`
-cannot be determined.
+ Group that the user needs to be a member of if
+`LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
 '''
 
 
@@ -262,7 +256,7 @@ Device cannot be access, reason unknown.
 LIBGAMMA_DEVICE_REQUIRE_GROUP = -22
 '''
 Device cannot be access, membership of the
-`group_gid` (named by `group_name` (can be
+`group.gid` (named by `group.name` (can be
 `None`, if so `errno` may have been set to
 tell why)) is required.
 '''
