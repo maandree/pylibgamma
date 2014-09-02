@@ -106,7 +106,7 @@ def libgamma_native_get_group_name() -> str:
     cannot be determined.
     '''
     cdef bytes bs
-    if libgamma_group_name == NULL:
+    if libgamma_group_name is NULL:
         return None
     bs = libgamma_group_name
     return bs.decode('utf-8', 'strict')
@@ -157,13 +157,12 @@ def libgamma_native_name_of_error(value : int) -> str:
     
     @param   value  The error code.
     @return         The name of the definition associated with the error code,
-                    `None` if the error code does not exist. The return string
-                    should not be `free`:d.
+                    `None` if the error code does not exist.
     '''
     cdef const char* name
     cdef bytes bs
     name = libgamma_name_of_error(<int>value)
-    if name == NULL:
+    if name is NULL:
         return None
     bs = name
     return bs.decode('utf-8', 'strict')

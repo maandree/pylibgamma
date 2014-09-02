@@ -273,7 +273,7 @@ def libgamma_native_gamma_ramps8_create(red_size : int, green_size : int, blue_s
     cdef void* allocation = malloc(sizeof(libgamma_gamma_ramps8_t))
     cdef libgamma_gamma_ramps8_t* item = <libgamma_gamma_ramps8_t*>allocation
     cdef size_t red, green, blue
-    if item == NULL:
+    if item is NULL:
         return errno
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
@@ -339,7 +339,7 @@ def libgamma_native_gamma_ramps16_create(red_size : int, green_size : int, blue_
     cdef void* allocation = malloc(sizeof(libgamma_gamma_ramps16_t))
     cdef libgamma_gamma_ramps16_t* item = <libgamma_gamma_ramps16_t*>allocation
     cdef size_t red, green, blue
-    if item == NULL:
+    if item is NULL:
         return errno
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
@@ -405,7 +405,7 @@ def libgamma_native_gamma_ramps32_create(red_size : int, green_size : int, blue_
     cdef void* allocation = malloc(sizeof(libgamma_gamma_ramps32_t))
     cdef libgamma_gamma_ramps32_t* item = <libgamma_gamma_ramps32_t*>allocation
     cdef size_t red, green, blue
-    if item == NULL:
+    if item is NULL:
         return errno
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
@@ -471,7 +471,7 @@ def libgamma_native_gamma_ramps64_create(red_size : int, green_size : int, blue_
     cdef void* allocation = malloc(sizeof(libgamma_gamma_ramps64_t))
     cdef libgamma_gamma_ramps64_t* item = <libgamma_gamma_ramps64_t*>allocation
     cdef size_t red, green, blue
-    if item == NULL:
+    if item is NULL:
         return errno
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
@@ -537,7 +537,7 @@ def libgamma_native_gamma_rampsf_create(red_size : int, green_size : int, blue_s
     cdef void* allocation = malloc(sizeof(libgamma_gamma_rampsf_t))
     cdef libgamma_gamma_rampsf_t* item = <libgamma_gamma_rampsf_t*>allocation
     cdef size_t red, green, blue
-    if item == NULL:
+    if item is NULL:
         return errno
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)
@@ -603,7 +603,7 @@ def libgamma_native_gamma_rampsd_create(red_size : int, green_size : int, blue_s
     cdef void* allocation = malloc(sizeof(libgamma_gamma_rampsd_t))
     cdef libgamma_gamma_rampsd_t* item = <libgamma_gamma_rampsd_t*>allocation
     cdef size_t red, green, blue
-    if item == NULL:
+    if item is NULL:
         return errno
     red   = <size_t><void*>(item.red)
     green = <size_t><void*>(item.green)

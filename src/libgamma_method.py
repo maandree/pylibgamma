@@ -271,11 +271,42 @@ class CRTCInformation:
                                          of an error identifier provided by this library.
     '''
     
-    def __init__(self):
+    def __init__(self, data):
         '''
         Constructor
+        
+        @param  data:list  The value of each variable
         '''
-        pass
+        self.edid                 = data[0]
+        self.edid_error           = data[1]
+        self.width_mm             = data[2]
+        self.width_mm_error       = data[3]
+        self.height_mm            = data[4]
+        self.height_mm_error      = data[5]
+        self.width_mm_edid        = data[6]
+        self.width_mm_edid_error  = data[7]
+        self.height_mm_edid       = data[8]
+        self.height_mm_edid_error = data[9]
+        self.red_gamma_size       = data[10]
+        self.green_gamma_size     = data[11]
+        self.blue_gamma_size      = data[12]
+        self.gamma_size_error     = data[13]
+        self.gamma_depth          = data[14]
+        self.gamma_depth_error    = data[15]
+        self.gamma_support        = data[16]
+        self.gamma_support_error  = data[17]
+        self.subpixel_order       = data[18]
+        self.subpixel_order_error = data[19]
+        self.active               = data[20]
+        self.active_error         = data[21]
+        self.connector_name       = data[22]
+        self.connector_name_error = data[23]
+        self.connector_type       = data[24]
+        self.connector_type_error = data[25]
+        self.gamma_red            = data[26]
+        self.gamma_green          = data[27]
+        self.gamma_blue           = data[28]
+        self.gamma_error          = data[29]
 
 
 LIBGAMMA_CONNECTOR_TYPE_Unknown = 0

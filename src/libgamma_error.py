@@ -115,8 +115,7 @@ def name_of_error(value : int) -> str:
     
     @param   value  The error code.
     @return         The name of the definition associated with the error code,
-                    `None` if the error code does not exist. The return string
-                    should not be `free`:d.
+                    `None` if the error code does not exist.
     '''
     from libgamma_native_error import libgamma_native_name_of_error
     return libgamma_native_name_of_error(value)

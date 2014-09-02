@@ -104,7 +104,7 @@ def libgamma_native_get_group_name() -> str:
     cannot be determined.
     '''
     cdef bytes bs
-    if libgamma_group_name == NULL:
+    if libgamma_group_name is NULL:
         return None
     bs = libgamma_group_name
     return bs.decode('utf-8', 'strict')
@@ -161,7 +161,7 @@ def libgamma_native_name_of_error(value : int) -> str:
     cdef const char* name
     cdef bytes bs
     name = libgamma_name_of_error(<int>value)
-    if name == NULL:
+    if name is NULL:
         return None
     bs = name
     return bs.decode('utf-8', 'strict')

@@ -19,4 +19,5 @@ along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
 from libgamma_error import *
 from libgamma_method import *
+from libgamma_facade import *
 
