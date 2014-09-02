@@ -61,7 +61,7 @@ obj/%.o: obj/%.c src/*.h
 	$(CC) $(CC_FLAGS) -iquote"src" -c -o $@ $<
 
 obj/%.c: obj/%.pyx
-	$(CYTHON) -3 -v $<
+	if ! $(CYTHON) -3 -v $< ; then rm $@ ; false ; fi
 
 obj/libgamma_native_facade.pyx: src/libgamma_native_facade.pyx
 	@mkdir -p obj
