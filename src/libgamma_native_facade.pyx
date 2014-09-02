@@ -22,6 +22,7 @@ cimport cython
 from libc.stddef cimport size_t
 from libc.stdlib cimport malloc, free
 from libc.stdint cimport int32_t, uint8_t, uint16_t, uint32_t, uint64_t
+from libc.errno cimport errno
 
 
 ctypedef int libgamma_subpixel_order_t
@@ -634,7 +635,7 @@ Release all resources in an information data structure for a CRTC.
 
 cdef extern int libgamma_crtc_get_gamma_ramps8(libgamma_crtc_state_t* this, libgamma_gamma_ramps8_t* ramps)
 '''
-Get current the gamma ramps for a CRTC, 8-bit gamma-depth version.
+Get the current gamma ramps for a CRTC, 8-bit gamma-depth version.
 
 @param   this   The CRTC state.
 @param   ramps  The gamma ramps to fill with the current values
@@ -657,7 +658,7 @@ Set the gamma ramps for a CRTC, 8-bit gamma-depth version.
 
 cdef extern int libgamma_crtc_get_gamma_ramps16(libgamma_crtc_state_t* this, libgamma_gamma_ramps16_t* ramps)
 '''
-Get current the gamma ramps for a CRTC, 16-bit gamma-depth version.
+Get the current gamma ramps for a CRTC, 16-bit gamma-depth version.
 
 @param   this   The CRTC state.
 @param   ramps  The gamma ramps to fill with the current values
@@ -680,7 +681,7 @@ Set the gamma ramps for a CRTC, 16-bit gamma-depth version.
 
 cdef extern int libgamma_crtc_get_gamma_ramps32(libgamma_crtc_state_t* this, libgamma_gamma_ramps32_t* ramps)
 '''
-Get current the gamma ramps for a CRTC, 32-bit gamma-depth version.
+Get the current gamma ramps for a CRTC, 32-bit gamma-depth version.
 
 @param   this   The CRTC state.
 @param   ramps  The gamma ramps to fill with the current values.
@@ -703,7 +704,7 @@ Set the gamma ramps for a CRTC, 32-bit gamma-depth version.
 
 cdef extern int libgamma_crtc_get_gamma_ramps64(libgamma_crtc_state_t* this, libgamma_gamma_ramps64_t* ramps)
 '''
-Get current the gamma ramps for a CRTC, 64-bit gamma-depth version.
+Get the current gamma ramps for a CRTC, 64-bit gamma-depth version.
 
 @param   this   The CRTC state.
 @param   ramps  The gamma ramps to fill with the current values.
@@ -737,7 +738,7 @@ Set the gamma ramps for a CRTC, `float` version.
 
 cdef extern int libgamma_crtc_get_gamma_rampsf(libgamma_crtc_state_t* this, libgamma_gamma_rampsf_t* ramps)
 '''
-Get current the gamma ramps for a CRTC, `float` version.
+Get the current gamma ramps for a CRTC, `float` version.
 
 @param   this   The CRTC state.
 @param   ramps  The gamma ramps to fill with the current values.
@@ -749,7 +750,7 @@ Get current the gamma ramps for a CRTC, `float` version.
 
 cdef extern int libgamma_crtc_get_gamma_rampsd(libgamma_crtc_state_t* this, libgamma_gamma_rampsd_t* ramps)
 '''
-Get current the gamma ramps for a CRTC, `double` version.
+Get the current gamma ramps for a CRTC, `double` version.
 
 @param   this   The CRTC state.
 @param   ramps  The gamma ramps to fill with the current values.
@@ -821,7 +822,7 @@ def libgamma_native_method_capabilities(method : int) -> tuple:
     Return the capabilities of an adjustment method.
     
     @param   method       The adjustment method (display server and protocol).
-    @return  :(int, int)  Input parameters for `MethodCapabilities.__init__`
+    @return  :(int, int)  Input parameters for `MethodCapabilities.__init__`.
     '''
     cdef libgamma_method_capabilities_t caps
     libgamma_method_capabilities(&caps, <int>method)
@@ -888,7 +889,9 @@ def libgamma_native_site_create(method : int, site : str) -> tuple:
                                           or allocate on the stack. Note however that it will
                                           not be `free`:d if this function fails.
     @return  :(site:int, partitions:int)  First value:   The created site, zero on error
-                                          Second value:  The number of partitions in the site, -1 on error
+                                          Second value:  The number of partitions in the site,
+                                                         on error: the value of the error identifier
+                                                         provided by this library or `errno`.
     '''
     cdef libgamma_site_state_t* this
     cdef char* site_
@@ -907,9 +910,9 @@ def libgamma_native_site_create(method : int, site : str) -> tuple:
         for i in range(len(site_bs)):
             site_[i] = <char>(site_bs[i])
     r = int(libgamma_site_initialise(this, <int>method, site_))
-    if r < 0:
+    if not r == 0:
         libgamma_site_free(this)
-        return (0, -1)
+        return (0, int(errno) if r == -1 else r)
     return (int(this_address), int(this.partitions_available))
 
 
@@ -932,14 +935,15 @@ def libgamma_native_site_restore(this : int) -> int:
     Restore the gamma ramps all CRTC:s with a site to the system settings.
     
     @param   this  The site state.
-    @return        Zero on success, otherwise (negative) the value of an
-                   error identifier provided by this library.
+    @return        Zero on success, otherwise the value of an error
+                   identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef libgamma_site_state_t* this_
     this_address = <size_t>this
     this_ = <libgamma_site_state_t*><void*>this_address
-    return int(libgamma_site_restore(this_))
+    r = int(libgamma_site_restore(this_))
+    return int(errno) if r == -1 else r
 
 
 
@@ -950,7 +954,9 @@ def libgamma_native_partition_create(site : int, partition : int) -> tuple:
     @param   site                         The site state for the site that the partition belongs to.
     @param   partition                    The index of the partition within the site.
     @return  :(site:int, partitions:int)  First value:   The created partition, zero on error
-                                          Second value:  The number of CRTC:s in the partition, -1 on error
+                                          Second value:  The number of CRTC:s in the partition,
+                                                         on error: the value of the error identifier
+                                                         provided by this library or `errno`.
     '''
     cdef libgamma_partition_state_t* this
     cdef libgamma_site_state_t* site_
@@ -963,9 +969,9 @@ def libgamma_native_partition_create(site : int, partition : int) -> tuple:
         raise MemoryError()
     this_address = <size_t><void*>this
     r = int(libgamma_partition_initialise(this, site_, <size_t>partition))
-    if r < 0:
+    if not r == 0:
         libgamma_partition_free(this)
-        return (0, -1)
+        return (0, int(errno) if r == -1 else r)
     return (int(this_address), int(this.crtcs_available))
 
 
@@ -988,24 +994,27 @@ def libgamma_native_partition_restore(this : int) -> int:
     Restore the gamma ramps all CRTC:s with a partition to the system settings.
     
     @param   this  The partition state.
-    @return        Zero on success, otherwise (negative) the value of an
-                   error identifier provided by this library.
+    @return        Zero on success, otherwise the value of an error
+                   identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef libgamma_partition_state_t* this_
     this_address = <size_t>this
     this_ = <libgamma_partition_state_t*><void*>this_address
-    return int(libgamma_partition_restore(this_))
+    r = int(libgamma_partition_restore(this_))
+    return int(errno) if r == -1 else r
 
 
 
-def libgamma_native_crtc_create(partition : int, crtc : int) -> int:
+def libgamma_native_crtc_create(partition : int, crtc : int) -> tuple:
     '''
     Create an allocated CRTC state.
     
-    @param   partition  The partition state for the partition that the CRTC belongs to.
-    @param   crtc       The index of the CRTC within the partition.
-    @return             The created CRTC, zero on error
+    @param   partition    The partition state for the partition that the CRTC belongs to.
+    @param   crtc         The index of the CRTC within the partition.
+    @return  :(int, int)  First value:   The created CRTC, zero on error.
+                          Second value:  Zero on success, otherwise the value of an error
+                                         identifier provided by this library or `errno`.
     '''
     cdef libgamma_crtc_state_t* this
     cdef libgamma_partition_state_t* partition_
@@ -1018,10 +1027,10 @@ def libgamma_native_crtc_create(partition : int, crtc : int) -> int:
         raise MemoryError()
     this_address = <size_t><void*>this
     r = int(libgamma_crtc_initialise(this, partition_, <size_t>crtc))
-    if r < 0:
+    if not r == 0:
         libgamma_crtc_free(this)
-        return 0
-    return int(this_address)
+        return (0, int(errno) if r == -1 else r)
+    return (int(this_address), 0)
 
 
 def libgamma_native_crtc_free(this : int):
@@ -1043,14 +1052,15 @@ def libgamma_native_crtc_restore(this : int) -> int:
     Restore the gamma ramps for a CRTC to the system settings for that CRTC.
     
     @param   this  The CRTC state
-    @return        Zero on success, otherwise (negative) the value of an
-                   error identifier provided by this library.
+    @return        Zero on success, otherwise the value of an error
+                   identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef libgamma_crtc_state_t* this_
     this_address = <size_t>this
     this_ = <libgamma_crtc_state_t*><void*>this_address
-    return int(libgamma_crtc_restore(this_))
+    r = int(libgamma_crtc_restore(this_))
+    return int(errno) if r == -1 else r
 
 
 
@@ -1061,7 +1071,8 @@ def libgamma_native_get_crtc_information(crtc : int, fields : int) -> tuple:
     @param   crtc           The state of the CRTC whose information should be read.
     @param   field          OR:ed identifiers for the information about the CRTC that should be read.
     @return  :(list, :int)  First value:   Input parametrs for `CRTCInformation.__init__`
-                            Second value:  Zero on success, -1 on error. On error refer to the error reports in the return.
+                            Second value:  Zero on success, -1 on error. On error refer to
+                                           the error reports in the return.
     '''
     cdef libgamma_crtc_information_t info
     cdef size_t crtc_address
@@ -1116,12 +1127,12 @@ def libgamma_native_get_crtc_information(crtc : int, fields : int) -> tuple:
 
 def libgamma_native_crtc_get_gamma_ramps8(this : int, ramps : int) -> int:
     '''
-    Get current the gamma ramps for a CRTC, 8-bit gamma-depth version.
+    Get the current gamma ramps for a CRTC, 8-bit gamma-depth version.
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to fill with the current values.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1131,7 +1142,8 @@ def libgamma_native_crtc_get_gamma_ramps8(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_ramps8_t*><void*>ramps_address
-    return int(libgamma_crtc_get_gamma_ramps8(this_, ramps_))
+    r = int(libgamma_crtc_get_gamma_ramps8(this_, ramps_))
+    return int(errno) if r == -1 else r
 
 
 def libgamma_native_crtc_set_gamma_ramps8(this : int, ramps : int) -> int:
@@ -1140,8 +1152,8 @@ def libgamma_native_crtc_set_gamma_ramps8(this : int, ramps : int) -> int:
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to apply.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1151,18 +1163,19 @@ def libgamma_native_crtc_set_gamma_ramps8(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_ramps8_t*><void*>ramps_address
-    return int(libgamma_crtc_set_gamma_ramps8(this_, ramps_[0]))
+    r = int(libgamma_crtc_set_gamma_ramps8(this_, ramps_[0]))
+    return int(errno) if r == -1 else r
 
 
 
 def libgamma_native_crtc_get_gamma_ramps16(this : int, ramps : int) -> int:
     '''
-    Get current the gamma ramps for a CRTC, 16-bit gamma-depth version.
+    Get the current gamma ramps for a CRTC, 16-bit gamma-depth version.
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to fill with the current values.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1172,7 +1185,8 @@ def libgamma_native_crtc_get_gamma_ramps16(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_ramps16_t*><void*>ramps_address
-    return int(libgamma_crtc_get_gamma_ramps16(this_, ramps_))
+    r = int(libgamma_crtc_get_gamma_ramps16(this_, ramps_))
+    return int(errno) if r == -1 else r
 
 
 def libgamma_native_crtc_set_gamma_ramps16(this : int, ramps : int) -> int:
@@ -1181,8 +1195,8 @@ def libgamma_native_crtc_set_gamma_ramps16(this : int, ramps : int) -> int:
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to apply.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1192,18 +1206,19 @@ def libgamma_native_crtc_set_gamma_ramps16(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_ramps16_t*><void*>ramps_address
-    return int(libgamma_crtc_set_gamma_ramps16(this_, ramps_[0]))
+    r = int(libgamma_crtc_set_gamma_ramps16(this_, ramps_[0]))
+    return int(errno) if r == -1 else r
 
 
 
 def libgamma_native_crtc_get_gamma_ramps32(this : int, ramps : int) -> int:
     '''
-    Get current the gamma ramps for a CRTC, 32-bit gamma-depth version.
+    Get the current gamma ramps for a CRTC, 32-bit gamma-depth version.
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to fill with the current values.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1213,7 +1228,8 @@ def libgamma_native_crtc_get_gamma_ramps32(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_ramps32_t*><void*>ramps_address
-    return int(libgamma_crtc_get_gamma_ramps32(this_, ramps_))
+    r = int(libgamma_crtc_get_gamma_ramps32(this_, ramps_))
+    return int(errno) if r == -1 else r
 
 
 def libgamma_native_crtc_set_gamma_ramps32(this : int, ramps : int) -> int:
@@ -1222,8 +1238,8 @@ def libgamma_native_crtc_set_gamma_ramps32(this : int, ramps : int) -> int:
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to apply.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1233,18 +1249,19 @@ def libgamma_native_crtc_set_gamma_ramps32(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_ramps32_t*><void*>ramps_address
-    return int(libgamma_crtc_set_gamma_ramps32(this_, ramps_[0]))
+    r = int(libgamma_crtc_set_gamma_ramps32(this_, ramps_[0]))
+    return int(errno) if r == -1 else r
 
 
 
 def libgamma_native_crtc_get_gamma_ramps64(this : int, ramps : int) -> int:
     '''
-    Get current the gamma ramps for a CRTC, 64-bit gamma-depth version.
+    Get the current gamma ramps for a CRTC, 64-bit gamma-depth version.
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to fill with the current values.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1254,7 +1271,8 @@ def libgamma_native_crtc_get_gamma_ramps64(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_ramps64_t*><void*>ramps_address
-    return int(libgamma_crtc_get_gamma_ramps64(this_, ramps_))
+    r = int(libgamma_crtc_get_gamma_ramps64(this_, ramps_))
+    return int(errno) if r == -1 else r
 
 
 def libgamma_native_crtc_set_gamma_ramps64(this : int, ramps : int) -> int:
@@ -1263,8 +1281,8 @@ def libgamma_native_crtc_set_gamma_ramps64(this : int, ramps : int) -> int:
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to apply.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1274,18 +1292,19 @@ def libgamma_native_crtc_set_gamma_ramps64(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_ramps64_t*><void*>ramps_address
-    return int(libgamma_crtc_set_gamma_ramps64(this_, ramps_[0]))
+    r = int(libgamma_crtc_set_gamma_ramps64(this_, ramps_[0]))
+    return int(errno) if r == -1 else r
 
 
 
 def libgamma_native_crtc_get_gamma_rampsf(this : int, ramps : int) -> int:
     '''
-    Get current the gamma ramps for a CRTC, `float` version.
+    Get the current gamma ramps for a CRTC, `float` version.
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to fill with the current values.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1295,7 +1314,8 @@ def libgamma_native_crtc_get_gamma_rampsf(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_rampsf_t*><void*>ramps_address
-    return int(libgamma_crtc_get_gamma_rampsf(this_, ramps_))
+    r = int(libgamma_crtc_get_gamma_rampsf(this_, ramps_))
+    return int(errno) if r == -1 else r
 
 
 def libgamma_native_crtc_set_gamma_rampsf(this : int, ramps : int) -> int:
@@ -1304,8 +1324,8 @@ def libgamma_native_crtc_set_gamma_rampsf(this : int, ramps : int) -> int:
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to apply.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1315,18 +1335,19 @@ def libgamma_native_crtc_set_gamma_rampsf(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_rampsf_t*><void*>ramps_address
-    return int(libgamma_crtc_set_gamma_rampsf(this_, ramps_[0]))
+    r = int(libgamma_crtc_set_gamma_rampsf(this_, ramps_[0]))
+    return int(errno) if r == -1 else r
 
 
 
 def libgamma_native_crtc_get_gamma_rampsd(this : int, ramps : int) -> int:
     '''
-    Get current the gamma ramps for a CRTC, `double` version.
+    Get the current gamma ramps for a CRTC, `double` version.
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to fill with the current values.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1336,7 +1357,8 @@ def libgamma_native_crtc_get_gamma_rampsd(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_rampsd_t*><void*>ramps_address
-    return int(libgamma_crtc_get_gamma_rampsd(this_, ramps_))
+    r = int(libgamma_crtc_get_gamma_rampsd(this_, ramps_))
+    return int(errno) if r == -1 else r
 
 
 def libgamma_native_crtc_set_gamma_rampsd(this : int, ramps : int) -> int:
@@ -1345,8 +1367,8 @@ def libgamma_native_crtc_set_gamma_rampsd(this : int, ramps : int) -> int:
     
     @param   this   The CRTC state.
     @param   ramps  The gamma ramps to apply.
-    @return         Zero on success, otherwise (negative) the value of an
-                    error identifier provided by this library.
+    @return         Zero on success, otherwise the value of an error
+                    identifier provided by this library or `errno`.
     '''
     cdef size_t this_address
     cdef size_t ramps_address
@@ -1356,5 +1378,6 @@ def libgamma_native_crtc_set_gamma_rampsd(this : int, ramps : int) -> int:
     ramps_address = <size_t>ramps
     this_ = <libgamma_crtc_state_t*><void*>this_address
     ramps_ = <libgamma_gamma_rampsd_t*><void*>ramps_address
-    return int(libgamma_crtc_set_gamma_rampsd(this_, ramps_[0]))
+    r = int(libgamma_crtc_set_gamma_rampsd(this_, ramps_[0]))
+    return int(errno) if r == -1 else r
 

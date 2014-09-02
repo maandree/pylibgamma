@@ -134,16 +134,16 @@ def value_of_error(name : str) -> int:
 
 
 
-LIBGAMMA_NO_SUCH_ADJUSTMENT_METHOD = -1
-'''
-The selected adjustment method does not exist
-or has been excluded at compile-time.
-'''
-
-LIBGAMMA_ERRNO_SET = -2
+LIBGAMMA_ERRNO_SET = -1
 '''
 `errno` has be set with a standard error number
 to indicate the what has gone wrong.
+'''
+
+LIBGAMMA_NO_SUCH_ADJUSTMENT_METHOD = -2
+'''
+The selected adjustment method does not exist
+or has been excluded at compile-time.
 '''
 
 LIBGAMMA_NO_SUCH_SITE = -3
@@ -418,4 +418,65 @@ lowest number. If this is lower than the
 number your program thinks it should be sould
 update your program for new errors.
 '''
+
+
+
+class LibgammaError(Exception):
+    '''
+    libgamma error class.
+    
+    @variable  errno     The error code.
+    @variable  strerror  The name of the error.
+    '''
+    
+    def __init__(self, errno : int, strerror : str):
+        '''
+        Constructor.
+        
+        @param  errno     The error code.
+        @param  strerror  The name of the error.
+        '''
+        self.errno = errno
+        self.strerror = strerror
+    
+    def __str__(self) -> str:
+        '''
+        Return the name of the error.
+        
+        @return  The name of the error.
+        '''
+        return self.strerror
+    
+    
+    def __repr__(self) -> str:
+        '''
+        Create a string representation of the error.
+        
+        @return  A string representation of the error.
+        '''
+        return 'LibgammaError(%i, %s)' % (self.errno, repr(self.strerror))
+
+
+
+def create_error(error_code : int) -> Exception:
+    '''
+    Create an exception from an error code.
+    
+    @param   error_code              The error code.
+    @return  :OSError|LibgammaError  The error as a throwable object.
+    '''
+    if error_code == LIBGAMMA_ERRNO_SET:
+        import ctypes
+        error_code = ctypes.get_errno()
+    
+    if error_code >= 0:
+        import c
+        e = OSError()
+        e.errno = error_code
+        e.strerror = c.strerror(e.errno)
+    else:
+        strerror = name_of_error(error_code)
+        e = LibgammaError(error_code, strerror)
+    
+    return e
 

@@ -17,6 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this library.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+from libgamma_error import create_error
+
 
 
 LIBGAMMA_METHOD_DUMMY = 0
@@ -812,4 +814,197 @@ class GammaRamps:
         required for the getter to function.
         '''
         raise AttributeError('cannot change depth')
+
+
+
+class Site:
+    '''
+    Site state.
+    
+    On operating systems that integrate a graphical environment
+    there is usually just one site. However, one systems with
+    pluggable graphics, like Unix-like systems such as GNU/Linux
+    and the BSD:s, there can usually be any (feasible) number of
+    sites. In X.org parlance they are called displays.
+    
+    @variable  method:int                The adjustment method of the site
+    @variable  site:str?                 The site identifier
+    @variable  partitions_available:int  The number of paritions available in the site
+    '''
+    
+    def __init__(self, method : int, site : str = None):
+        '''
+        Constructor.
+        
+        @param  method:int  The adjustment method of the site
+        @param  site:str?   The site identifier
+        '''
+        from libgamma_native_facade import libgamma_native_site_create
+        (self.__state, n) = libgamma_native_site_create(method, site)
+        if self.__state == 0:
+            raise create_error(n)
+        self.partitions_available = n
+        self.method = method
+        self.site = site
+    
+    
+    def __del__(self):
+        '''
+        This function is called when the object is not longer in use.
+        '''
+        from libgamma_native_facade import libgamma_native_site_free
+        libgamma_native_site_free(self.__state)
+    
+    
+    def restore(self):
+        '''
+        Restore the gamma ramps all CRTC:s with the site to the system settings.
+        '''
+        from libgamma_native_facade import libgamma_native_site_restore
+        r = libgamma_native_site_restore(self.__state)
+        if not r == 0:
+            raise create_error(r)
+
+
+class Partition:
+    '''
+    Partition state.
+    
+    Probably the majority of display server only one partition
+    per site. However, X.org can, and traditional used to have
+    on multi-headed environments, multiple partitions per site.
+    In X.org partitions are called 'screens'. It is not to be
+    confused with monitor. A screen is a collection of monitors,
+    and the mapping from monitors to screens is a surjection.
+    On hardware-level adjustment methods, such as Direct
+    Rendering Manager, a partition is a graphics card
+    
+    @variable  site:Site            The site of the partition
+    @variable  partition:int        The index of the partition
+    @variable  crtcs_available:int  The number of CRTC:s available in the parition.
+    '''
+    
+    def __init__(self, site : Site, partition : int):
+        '''
+        Constructor.
+        
+        @param  site       The site the of the partition
+        @param  partition  The index of the partition
+        '''
+        from libgamma_native_facade import libgamma_native_partition_create
+        (self.__state, n) = libgamma_native_partition_create(site, partition)
+        if self.__state == 0:
+            raise create_error(n)
+        self.crtcs_available = n
+        self.site = site
+        self.partition = partition
+    
+    
+    def __del__(self):
+        '''
+        This function is called when the object is not longer in use.
+        '''
+        from libgamma_native_facade import libgamma_native_partition_free
+        libgamma_native_partition_free(self.__state)
+    
+    
+    def restore(self):
+        '''
+        Restore the gamma ramps all CRTC:s with the partition to the system settings.
+        '''
+        from libgamma_native_facade import libgamma_native_partition_restore
+        r = libgamma_native_partition_restore(self.__state)
+        if not r == 0:
+            raise create_error(r)
+
+
+class CRTC:
+    '''
+    Cathode ray tube controller state.
+    
+    The CRTC controls the gamma ramps for the
+    monitor that is plugged in to the connector
+    that the CRTC belongs to.
+    
+    @variable  partition:Partition  The partition of the CRTC
+    @variable  crtc:int             The index of the CRTC
+    '''
+    
+    def __init__(self, partition : Partition, crtc : int):
+        '''
+        Constructor.
+        
+        @param  partition  The partition the of the CRTC
+        @param  crtc       The index of the CRTC
+        '''
+        from libgamma_native_facade import libgamma_native_crtc_create
+        (self.__state, n) = libgamma_native_crtc_create(partition, crtc)
+        if self.__state == 0:
+            raise create_error(n)
+        self.partition = partition
+        self.crtc = crtc
+    
+    
+    def __del__(self):
+        '''
+        This function is called when the object is not longer in use.
+        '''
+        from libgamma_native_facade import libgamma_native_crtc_free
+        libgamma_native_crtc_free(self.__state)
+    
+    
+    def restore(self):
+        '''
+        Restore the gamma ramps for a CRTC to the system settings for that CRTC.
+        '''
+        from libgamma_native_facade import libgamma_native_crtc_restore
+        r = libgamma_native_crtc_restore(self.__state)
+        if not r == 0:
+            raise create_error(r)
+    
+    
+    def information(fields : int) -> tuple:
+        '''
+        Read information about a CRTC.
+        
+        @param   field                       OR:ed identifiers for the information
+                                             about the CRTC that should be read.
+        @return  :(:CRTCInformation, :bool)  The information about the CRTC and
+                                             whether no errors occurred.
+        '''
+        from libgamma_native_facade import libgamma_native_get_crtc_information
+        (data, e) = libgamma_native_get_crtc_information(self.__state, fields)
+        return (CRTCInformation(data), e == 0)
+    
+    
+    def get_gamma(ramps : GammaRamps):
+        '''
+        Get the current gamma ramps for the CRTC.
+        
+        @param  ramps  The gamma ramps to fill with the current values.
+        '''
+        if   ramps.depth ==  8:  r = libgamma_native_crtc_get_gamma_ramps8(self.__state, ramps.__ramp)
+        elif ramps.depth == 16:  r = libgamma_native_crtc_get_gamma_ramps16(self.__state, ramps.__ramp)
+        elif ramps.depth == 32:  r = libgamma_native_crtc_get_gamma_ramps32(self.__state, ramps.__ramp)
+        elif ramps.depth == 64:  r = libgamma_native_crtc_get_gamma_ramps64(self.__state, ramps.__ramp)
+        elif ramps.depth == -1:  r = libgamma_native_crtc_get_gamma_rampsf(self.__state, ramps.__ramp)
+        elif ramps.depth == -2:  r = libgamma_native_crtc_get_gamma_rampsd(self.__state, ramps.__ramp)
+        if not r == 0:
+            raise create_error(r)
+    
+    
+    def set_gamma(ramps : GammaRamps):
+        '''
+        Set gamma ramps for the CRTC.
+        
+        @param  ramps  The gamma ramps to apply.
+        '''
+        if   ramps.depth ==  8:  r = libgamma_native_crtc_set_gamma_ramps8(self.__state, ramps.__ramp)
+        elif ramps.depth == 16:  r = libgamma_native_crtc_set_gamma_ramps16(self.__state, ramps.__ramp)
+        elif ramps.depth == 32:  r = libgamma_native_crtc_set_gamma_ramps32(self.__state, ramps.__ramp)
+        elif ramps.depth == 64:  r = libgamma_native_crtc_set_gamma_ramps64(self.__state, ramps.__ramp)
+        elif ramps.depth == -1:  r = libgamma_native_crtc_set_gamma_rampsf(self.__state, ramps.__ramp)
+        elif ramps.depth == -2:  r = libgamma_native_crtc_set_gamma_rampsd(self.__state, ramps.__ramp)
+        if not r == 0:
+            raise create_error(r)
 
