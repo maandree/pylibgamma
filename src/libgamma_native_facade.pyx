@@ -166,7 +166,7 @@ cdef extern from "libgamma/libgamma-method.h":
         # The partition this CRTC belongs to.
         
         size_t crtc
-        #* The index of the CRTC within its partition.
+        # The index of the CRTC within its partition.
     
     
     ctypedef struct libgamma_crtc_information_t:
