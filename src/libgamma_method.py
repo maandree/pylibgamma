@@ -755,10 +755,10 @@ class GammaRamps:
         '''
         Constructor.
         
-        @param  red_size    The number of stops in the gamma ramp for the red channel
-        @param  green_size  The number of stops in the gamma ramp for the green channel, `...` for `red_size`
-        @param  blue_size   The number of stops in the gamma ramp for the blue channel, `...` for `green_size`
-        @param  depth       The depth of the gamma ramps
+        @param  red_size    The number of stops in the gamma ramp for the red channel.
+        @param  green_size  The number of stops in the gamma ramp for the green channel, `...` for `red_size`.
+        @param  blue_size   The number of stops in the gamma ramp for the blue channel, `...` for `green_size`.
+        @param  depth       The depth of the gamma ramps.
         '''
         if green_size is ...:  green_size = red_size
         if blue_size is ...:   blue_size = green_size
@@ -894,7 +894,7 @@ class GammaRamps:
         Get the depth of ramps.
         
         @return  :int  The ramps' depth in bits and -1 for single precision floating
-                       point and -2 for doublesingle precision floating point
+                       point and -2 for doublesingle precision floating point.
         '''
         return self._depth
     
@@ -919,17 +919,17 @@ class Site:
     and the BSD:s, there can usually be any (feasible) number of
     sites. In X.org parlance they are called displays.
     
-    @variable  method:int                The adjustment method of the site
-    @variable  site:str?                 The site identifier
-    @variable  partitions_available:int  The number of paritions available in the site
+    @variable  method:int                The adjustment method of the site.
+    @variable  site:str?                 The site identifier.
+    @variable  partitions_available:int  The number of paritions available in the site.
     '''
     
     def __init__(self, method : int, site : str = None):
         '''
         Constructor.
         
-        @param  method:int  The adjustment method of the site
-        @param  site:str?   The site identifier
+        @param  method:int  The adjustment method of the site.
+        @param  site:str?   The site identifier.
         '''
         from libgamma_native_facade import libgamma_native_site_create
         (self._state, n) = libgamma_native_site_create(method, site)
@@ -972,8 +972,8 @@ class Partition:
     On hardware-level adjustment methods, such as Direct
     Rendering Manager, a partition is a graphics card
     
-    @variable  site:Site            The site of the partition
-    @variable  partition:int        The index of the partition
+    @variable  site:Site            The site of the partition.
+    @variable  partition:int        The index of the partition.
     @variable  crtcs_available:int  The number of CRTC:s available in the parition.
     '''
     
@@ -981,8 +981,8 @@ class Partition:
         '''
         Constructor.
         
-        @param  site       The site the of the partition
-        @param  partition  The index of the partition
+        @param  site       The site of the partition.
+        @param  partition  The index of the partition.
         '''
         from libgamma_native_facade import libgamma_native_partition_create
         (self._state, n) = libgamma_native_partition_create(site._state, partition)
@@ -1020,16 +1020,16 @@ class CRTC:
     monitor that is plugged in to the connector
     that the CRTC belongs to.
     
-    @variable  partition:Partition  The partition of the CRTC
-    @variable  crtc:int             The index of the CRTC
+    @variable  partition:Partition  The partition of the CRTC.
+    @variable  crtc:int             The index of the CRTC.
     '''
     
     def __init__(self, partition : Partition, crtc : int):
         '''
         Constructor.
         
-        @param  partition  The partition the of the CRTC
-        @param  crtc       The index of the CRTC
+        @param  partition  The partition the of the CRTC.
+        @param  crtc       The index of the CRTC.
         '''
         from libgamma_native_facade import libgamma_native_crtc_create
         (self._state, n) = libgamma_native_crtc_create(partition._state, crtc)
