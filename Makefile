@@ -75,7 +75,7 @@ CYTHON_SRC = libgamma_native_error libgamma_native_facade libgamma_native_method
 
 
 
-.PHONY: all pyx-files py-files
+.PHONY: all pyc-files pyo-files so-files
 all: pyc-files pyo-files so-files
 pyc-files: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyc)
 pyo-files: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyo)
