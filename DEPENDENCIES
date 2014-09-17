@@ -1,14 +1,14 @@
 RUNTIME DEPENDENCIES:
 
 	python3
-	libgamma>=0.3
+	libgamma>=0.6
 	libc
 
 
 BUILD DEPENDENCIES:
 
 	python3
-	libgamma>=0.3
+	libgamma>=0.6
 	libc
 	make
 	c99

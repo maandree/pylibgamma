@@ -23,13 +23,15 @@ from posix.unistd cimport gid_t
 from libc.string cimport strerror as c_strerror
 
 
-cdef extern gid_t libgamma_group_gid
+cdef extern gid_t libgamma_group_gid_get()
+cdef extern void libgamma_group_gid_set(gid_t)
 '''
 Group that the user needs to be a member of if
 `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
 '''
 
-cdef extern const char* libgamma_group_name
+cdef extern const char* libgamma_group_name_get()
+cdef extern void libgamma_group_name_set(const char*)
 '''
 Group that the user needs to be a member of if
 `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
@@ -85,7 +87,7 @@ def libgamma_native_get_group_gid() -> int:
     Group that the user needs to be a member of if
     `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
     '''
-    return int(libgamma_group_gid)
+    return int(libgamma_group_gid_get())
 
 def libgamma_native_set_group_gid(gid : int):
     '''
@@ -94,8 +96,7 @@ def libgamma_native_set_group_gid(gid : int):
     Group that the user needs to be a member of if
     `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
     '''
-    global libgamma_group_gid
-    libgamma_group_gid = <int>gid
+    libgamma_group_gid_set(<int>gid)
 
 
 def libgamma_native_get_group_name() -> str:
@@ -107,10 +108,12 @@ def libgamma_native_get_group_name() -> str:
     `None` if the name of the group `libgamma_group_gid`
     cannot be determined.
     '''
+    cdef const char* group_name
     cdef bytes bs
-    if libgamma_group_name is NULL:
+    group_name = libgamma_group_name_get()
+    if group_name is NULL:
         return None
-    bs = libgamma_group_name
+    bs = group_name
     return bs.decode('utf-8', 'strict')
 
 def libgamma_native_set_group_name(name : str):
@@ -122,13 +125,14 @@ def libgamma_native_set_group_name(name : str):
     `None` if the name of the group `libgamma_group_gid`
     cannot be determined.
     '''
-    global libgamma_group_name
+    cdef const char* group_name
     cdef bytes bs
     if name is None:
-        libgamma_group_name = <char*>NULL
+        libgamma_group_name_set(<char*>NULL)
         return
     bs = name.encode('utf-8') + bytes([0])
-    libgamma_group_name = bs
+    group_name = bs
+    libgamma_group_name_set(group_name)
 
 
 def libgamma_native_perror(name : str, error_code : int):
