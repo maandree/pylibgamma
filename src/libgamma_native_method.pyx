@@ -584,7 +584,7 @@ def libgamma_native_gamma_rampsf_free(this : int):
     libgamma_gamma_rampsf_free(item)
 
 
-def libgamma_native_gamma_rampsf_get(this : int, index : int) -> int:
+def libgamma_native_gamma_rampsf_get(this : int, index : int) -> float:
     '''
     Read a stop in a gamma ramp.
     
@@ -594,10 +594,10 @@ def libgamma_native_gamma_rampsf_get(this : int, index : int) -> int:
     '''
     cdef void* address = <void*><size_t>this
     cdef float* ramp = <float*>address
-    return int(ramp[<size_t>index])
+    return float(ramp[<size_t>index])
 
 
-def libgamma_native_gamma_rampsf_set(this : int, index : int, value : int):
+def libgamma_native_gamma_rampsf_set(this : int, index : int, value : float):
     '''
     Modify a stop in a gamma ramp.
     
@@ -655,7 +655,7 @@ def libgamma_native_gamma_rampsd_free(this : int):
     libgamma_gamma_rampsd_free(item)
 
 
-def libgamma_native_gamma_rampsd_get(this : int, index : int) -> int:
+def libgamma_native_gamma_rampsd_get(this : int, index : int) -> float:
     '''
     Read a stop in a gamma ramp.
     
@@ -665,10 +665,10 @@ def libgamma_native_gamma_rampsd_get(this : int, index : int) -> int:
     '''
     cdef void* address = <void*><size_t>this
     cdef double* ramp = <double*>address
-    return int(ramp[<size_t>index])
+    return float(ramp[<size_t>index])
 
 
-def libgamma_native_gamma_rampsd_set(this : int, index : int, value : int):
+def libgamma_native_gamma_rampsd_set(this : int, index : int, value : float):
     '''
     Modify a stop in a gamma ramp.
     
