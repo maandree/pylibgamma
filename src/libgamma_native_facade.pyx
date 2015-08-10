@@ -857,6 +857,8 @@ def libgamma_native_method_default_site(method : int) -> str:
     cdef char* var
     cdef bytes bs
     var = libgamma_method_default_site(<int>method)
+    if var is NULL:
+        return None
     bs = var
     return bs.decode('utf-8', 'strict')
 
@@ -874,6 +876,8 @@ def libgamma_native_method_default_site_variable(method : int) -> str:
     cdef const char* var
     cdef bytes bs
     var = libgamma_method_default_site_variable(<int>method)
+    if var is NULL:
+        return None
     bs = var
     return bs.decode('utf-8', 'strict')
 
