@@ -139,23 +139,23 @@ install-lib: install-source install-compiled install-optimised install-native
 
 .PHONY: install-source
 install-source: $(foreach M,$(PYTHON_SRC),src/$(M).py)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
-	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
+	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma"
+	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma"
 
 .PHONY: install-compiled
 install-compiled: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyc)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
-	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
+	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma/__pycache__"
+	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma/__pycache__"
 
 .PHONY: install-optimised
 install-optimised: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).$(PY_OPT2_EXT))
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
-	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
+	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma/__pycache__"
+	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma/__pycache__"
 
 .PHONY: install-native
 install-native: $(foreach M,$(CYTHON_SRC),bin/$(M).so)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
-	install -m755 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
+	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma"
+	install -m755 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma"
 
 
 .PHONY: install-copyright
@@ -178,12 +178,12 @@ uninstall:
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
 	-rmdir -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__/$(M).cpython-$(PY_VER).$(PY_OPT2_EXT)")
-	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__/$(M).cpython-$(PY_VER).pyc")
-	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/$(M).py")
-	-rm -- $(foreach M,$(CYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/$(M).so")
-	-rmdir -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
-	-rmdir -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
+	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma/__pycache__/$(M).cpython-$(PY_VER).$(PY_OPT2_EXT)")
+	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma/__pycache__/$(M).cpython-$(PY_VER).pyc")
+	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma/$(M).py")
+	-rm -- $(foreach M,$(CYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma/$(M).so")
+	-rmdir -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma/__pycache__"
+	-rmdir -- "$(DESTDIR)$(PYTHONDIR)/site-packages/libgamma"
 
 
 .PHONY: clean
