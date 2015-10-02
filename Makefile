@@ -27,7 +27,7 @@ PLATFORM = posix
 # The major version number of the current Python installation
 PY_MAJOR = 3
 # The minor version number of the current Python installation
-PY_MINOR = 4
+PY_MINOR = 5
 # The version number of the current Python installation without a dot
 PY_VER = $(PY_MAJOR)$(PY_MINOR)
 # The version number of the current Python installation with a dot
@@ -74,11 +74,19 @@ PYTHON_SRC = libgamma_error libgamma_facade libgamma_method libgamma
 CYTHON_SRC = libgamma_native_error libgamma_native_facade libgamma_native_method
 
 
+# Filename extension for -OO optimised python files
+ifeq ($(shell test $(PY_VER) -ge 35 ; echo $$?),0)
+PY_OPT2_EXT = opt-2.pyc
+else
+PY_OPT2_EXT = pyo
+endif
+
+
 
 .PHONY: all pyc-files pyo-files so-files
 all: pyc-files pyo-files so-files
 pyc-files: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyc)
-pyo-files: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyo)
+pyo-files: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).$(PY_OPT2_EXT))
 so-files: $(foreach M,$(CYTHON_SRC),bin/$(M).so)
 
 bin/%.so: obj/%.o
@@ -112,7 +120,7 @@ endif
 src/__pycache__/%.cpython-$(PY_VER).pyc: src/%.py
 	$(PYTHON) -m compileall $<
 
-src/__pycache__/%.cpython-$(PY_VER).pyo: src/%.py
+src/__pycache__/%.cpython-$(PY_VER).$(PY_OPT2_EXT): src/%.py
 	$(PYTHON) -OO -m compileall $<
 
 
@@ -131,23 +139,23 @@ install-lib: install-source install-compiled install-optimised install-native
 
 .PHONY: install-source
 install-source: $(foreach M,$(PYTHON_SRC),src/$(M).py)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)"
-	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)"
+	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
+	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
 
 .PHONY: install-compiled
 install-compiled: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyc)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/__pycache__"
-	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/__pycache__"
+	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
+	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
 
 .PHONY: install-optimised
-install-optimised: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyo)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/__pycache__"
-	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/__pycache__"
+install-optimised: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).$(PY_OPT2_EXT))
+	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
+	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
 
 .PHONY: install-native
 install-native: $(foreach M,$(CYTHON_SRC),bin/$(M).so)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)"
-	install -m755 $^ -- "$(DESTDIR)$(PYTHONDIR)"
+	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
+	install -m755 $^ -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
 
 
 .PHONY: install-copyright
@@ -170,10 +178,12 @@ uninstall:
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
 	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
 	-rmdir -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/__pycache__/$(M).cpython-$(PY_VER).pyo")
-	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/__pycache__/$(M).cpython-$(PY_VER).pyc")
-	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/$(M).py")
-	-rm -- $(foreach M,$(CYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/$(M).so")
+	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__/$(M).cpython-$(PY_VER).$(PY_OPT2_EXT)")
+	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__/$(M).cpython-$(PY_VER).pyc")
+	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/$(M).py")
+	-rm -- $(foreach M,$(CYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/$(M).so")
+	-rmdir -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)/__pycache__"
+	-rmdir -- "$(DESTDIR)$(PYTHONDIR)/site-packages/$(PKGNAME)"
 
 
 .PHONY: clean
