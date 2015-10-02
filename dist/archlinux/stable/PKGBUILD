@@ -10,7 +10,7 @@ license=('GPL3')
 depends=(python3 'libgamma>=0.6' glibc)
 makedepends=(python3 'libgamma>=0.6' glibc make gcc cython coreutils pkg-config)
 source=($url/archive/$pkgver.tar.gz)
-sha256sums=(af4454704c2474b048aeb89778c848e3fa6e6b3a989b2246f4e327fc96a9f418)
+sha256sums=(cb9dec5115b518bac4af8706ab33c78d9d04ce24de5692db16988499eb90f8a2)
 
 
 build() {
