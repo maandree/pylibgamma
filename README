@@ -1,2 +1,13 @@
-Python 3 wrapper for libgamma.
+NAME
+	pylibgamma - Python 3 wrapper for libgamma.
+
+DESCRIPTION
+	pylibgamma is a Python 3 wrapper for libgamma, a library that aims
+	to abstract away the display server when adjusting the colour curves
+	for monitors via gamma ramps.
+
+SEE ALSO
+	libgamma(7)
+
+	Full documentation available locally via the command help i python(1).
 
