@@ -449,7 +449,7 @@ cdef extern from "include-libgamma.h":
         # The gamma ramp for the blue channel.
 
 
-cdef extern size_t libgamma_list_methods(int* methods, size_t buf_size, int operation)
+cdef extern size_t libgamma_list_methods(int* methods, size_t buf_size, int operation) nogil
 '''
 List available adjustment methods by their order of preference based on the environment.
 
@@ -469,7 +469,7 @@ List available adjustment methods by their order of preference based on the envi
 '''
 
 
-cdef extern int libgamma_is_method_available(int method)
+cdef extern int libgamma_is_method_available(int method) nogil
 '''
 Check whether an adjustment method is available, non-existing (invalid) methods will be
 identified as not available under the rationale that the library may be out of date.
@@ -479,7 +479,7 @@ identified as not available under the rationale that the library may be out of d
 '''
 
 
-cdef extern void libgamma_method_capabilities(libgamma_method_capabilities_t* this, int method)
+cdef extern void libgamma_method_capabilities(libgamma_method_capabilities_t* this, int method) nogil
 '''
 Return the capabilities of an adjustment method.
 
@@ -488,7 +488,7 @@ Return the capabilities of an adjustment method.
 '''
 
 
-cdef extern char* libgamma_method_default_site(int method)
+cdef extern char* libgamma_method_default_site(int method) nogil
 '''
 Return the default site for an adjustment method.
 
@@ -499,7 +499,7 @@ Return the default site for an adjustment method.
 '''
 
 
-cdef extern const char* libgamma_method_default_site_variable(int method)
+cdef extern const char* libgamma_method_default_site_variable(int method) nogil
 '''
 Return the default variable that determines
 the default site for an adjustment method.
@@ -513,7 +513,7 @@ the default site for an adjustment method.
 
 
 
-cdef extern int libgamma_site_initialise(libgamma_site_state_t* this, int method, char* site)
+cdef extern int libgamma_site_initialise(libgamma_site_state_t* this, int method, char* site) nogil
 '''
 Initialise an allocated site state.
 
@@ -530,7 +530,7 @@ Initialise an allocated site state.
 '''
 
 
-cdef extern void libgamma_site_free(libgamma_site_state_t* this)
+cdef extern void libgamma_site_free(libgamma_site_state_t* this) nogil
 '''
 Release all resources held by a site state
 and free the site state pointer.
@@ -539,7 +539,7 @@ and free the site state pointer.
 '''
 
 
-cdef extern int libgamma_site_restore(libgamma_site_state_t* this)
+cdef extern int libgamma_site_restore(libgamma_site_state_t* this) nogil
 '''
 Restore the gamma ramps all CRTC:s with a site to the system settings.
 
@@ -550,7 +550,7 @@ Restore the gamma ramps all CRTC:s with a site to the system settings.
 
 
 
-cdef extern int libgamma_partition_initialise(libgamma_partition_state_t* this, libgamma_site_state_t* site, size_t partition)
+cdef extern int libgamma_partition_initialise(libgamma_partition_state_t* this, libgamma_site_state_t* site, size_t partition) nogil
 '''
 Initialise an allocated partition state.
 
@@ -562,7 +562,7 @@ Initialise an allocated partition state.
 '''
 
 
-cdef extern void libgamma_partition_free(libgamma_partition_state_t* this)
+cdef extern void libgamma_partition_free(libgamma_partition_state_t* this) nogil
 '''
 Release all resources held by a partition state
 and free the partition state pointer.
@@ -571,7 +571,7 @@ and free the partition state pointer.
 '''
 
 
-cdef extern int libgamma_partition_restore(libgamma_partition_state_t* this)
+cdef extern int libgamma_partition_restore(libgamma_partition_state_t* this) nogil
 '''
 Restore the gamma ramps all CRTC:s with a partition to the system settings.
 
@@ -582,7 +582,7 @@ Restore the gamma ramps all CRTC:s with a partition to the system settings.
 
 
 
-cdef extern int libgamma_crtc_initialise(libgamma_crtc_state_t* this, libgamma_partition_state_t* partition, size_t crtc)
+cdef extern int libgamma_crtc_initialise(libgamma_crtc_state_t* this, libgamma_partition_state_t* partition, size_t crtc) nogil
 '''
 Initialise an allocated CRTC state.
 
@@ -594,7 +594,7 @@ Initialise an allocated CRTC state.
 '''
 
 
-cdef extern void libgamma_crtc_free(libgamma_crtc_state_t* this)
+cdef extern void libgamma_crtc_free(libgamma_crtc_state_t* this) nogil
 '''
 Release all resources held by a CRTC state
 and free the CRTC state pointer.
@@ -603,7 +603,7 @@ and free the CRTC state pointer.
 '''
 
 
-cdef extern int libgamma_crtc_restore(libgamma_crtc_state_t* this)
+cdef extern int libgamma_crtc_restore(libgamma_crtc_state_t* this) nogil
 '''
 Restore the gamma ramps for a CRTC to the system settings for that CRTC.
 
@@ -614,7 +614,7 @@ Restore the gamma ramps for a CRTC to the system settings for that CRTC.
 
 
 
-cdef extern int libgamma_get_crtc_information(libgamma_crtc_information_t* this, libgamma_crtc_state_t* crtc, int32_t fields)
+cdef extern int libgamma_get_crtc_information(libgamma_crtc_information_t* this, libgamma_crtc_state_t* crtc, int32_t fields) nogil
 '''
 Read information about a CRTC.
 
@@ -625,7 +625,7 @@ Read information about a CRTC.
 '''
 
 
-cdef extern void libgamma_crtc_information_destroy(libgamma_crtc_information_t* this)
+cdef extern void libgamma_crtc_information_destroy(libgamma_crtc_information_t* this) nogil
 '''
 Release all resources in an information data structure for a CRTC.
 
@@ -634,7 +634,7 @@ Release all resources in an information data structure for a CRTC.
 
 
 
-cdef extern int libgamma_crtc_get_gamma_ramps8(libgamma_crtc_state_t* this, libgamma_gamma_ramps8_t* ramps)
+cdef extern int libgamma_crtc_get_gamma_ramps8(libgamma_crtc_state_t* this, libgamma_gamma_ramps8_t* ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, 8-bit gamma-depth version.
 
@@ -645,7 +645,7 @@ Get the current gamma ramps for a CRTC, 8-bit gamma-depth version.
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_ramps8(libgamma_crtc_state_t* this, libgamma_gamma_ramps8_t ramps)
+cdef extern int libgamma_crtc_set_gamma_ramps8(libgamma_crtc_state_t* this, libgamma_gamma_ramps8_t ramps) nogil
 '''
 Set the gamma ramps for a CRTC, 8-bit gamma-depth version.
 
@@ -657,7 +657,7 @@ Set the gamma ramps for a CRTC, 8-bit gamma-depth version.
 
 
 
-cdef extern int libgamma_crtc_get_gamma_ramps16(libgamma_crtc_state_t* this, libgamma_gamma_ramps16_t* ramps)
+cdef extern int libgamma_crtc_get_gamma_ramps16(libgamma_crtc_state_t* this, libgamma_gamma_ramps16_t* ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, 16-bit gamma-depth version.
 
@@ -668,7 +668,7 @@ Get the current gamma ramps for a CRTC, 16-bit gamma-depth version.
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_ramps16(libgamma_crtc_state_t* this, libgamma_gamma_ramps16_t ramps)
+cdef extern int libgamma_crtc_set_gamma_ramps16(libgamma_crtc_state_t* this, libgamma_gamma_ramps16_t ramps) nogil
 '''
 Set the gamma ramps for a CRTC, 16-bit gamma-depth version.
 
@@ -680,7 +680,7 @@ Set the gamma ramps for a CRTC, 16-bit gamma-depth version.
 
 
 
-cdef extern int libgamma_crtc_get_gamma_ramps32(libgamma_crtc_state_t* this, libgamma_gamma_ramps32_t* ramps)
+cdef extern int libgamma_crtc_get_gamma_ramps32(libgamma_crtc_state_t* this, libgamma_gamma_ramps32_t* ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, 32-bit gamma-depth version.
 
@@ -691,7 +691,7 @@ Get the current gamma ramps for a CRTC, 32-bit gamma-depth version.
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_ramps32(libgamma_crtc_state_t* this, libgamma_gamma_ramps32_t ramps)
+cdef extern int libgamma_crtc_set_gamma_ramps32(libgamma_crtc_state_t* this, libgamma_gamma_ramps32_t ramps) nogil
 '''
 Set the gamma ramps for a CRTC, 32-bit gamma-depth version.
 
@@ -703,7 +703,7 @@ Set the gamma ramps for a CRTC, 32-bit gamma-depth version.
 
 
 
-cdef extern int libgamma_crtc_get_gamma_ramps64(libgamma_crtc_state_t* this, libgamma_gamma_ramps64_t* ramps)
+cdef extern int libgamma_crtc_get_gamma_ramps64(libgamma_crtc_state_t* this, libgamma_gamma_ramps64_t* ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, 64-bit gamma-depth version.
 
@@ -714,7 +714,7 @@ Get the current gamma ramps for a CRTC, 64-bit gamma-depth version.
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_ramps64(libgamma_crtc_state_t* this, libgamma_gamma_ramps64_t ramps)
+cdef extern int libgamma_crtc_set_gamma_ramps64(libgamma_crtc_state_t* this, libgamma_gamma_ramps64_t ramps) nogil
 '''
 Set the gamma ramps for a CRTC, 64-bit gamma-depth version.
 
@@ -726,7 +726,7 @@ Set the gamma ramps for a CRTC, 64-bit gamma-depth version.
 
 
 
-cdef extern int libgamma_crtc_set_gamma_rampsf(libgamma_crtc_state_t* this, libgamma_gamma_rampsf_t ramps)
+cdef extern int libgamma_crtc_set_gamma_rampsf(libgamma_crtc_state_t* this, libgamma_gamma_rampsf_t ramps) nogil
 '''
 Set the gamma ramps for a CRTC, `float` version.
 
@@ -737,7 +737,7 @@ Set the gamma ramps for a CRTC, `float` version.
 '''
 
 
-cdef extern int libgamma_crtc_get_gamma_rampsf(libgamma_crtc_state_t* this, libgamma_gamma_rampsf_t* ramps)
+cdef extern int libgamma_crtc_get_gamma_rampsf(libgamma_crtc_state_t* this, libgamma_gamma_rampsf_t* ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, `float` version.
 
@@ -749,7 +749,7 @@ Get the current gamma ramps for a CRTC, `float` version.
 
 
 
-cdef extern int libgamma_crtc_get_gamma_rampsd(libgamma_crtc_state_t* this, libgamma_gamma_rampsd_t* ramps)
+cdef extern int libgamma_crtc_get_gamma_rampsd(libgamma_crtc_state_t* this, libgamma_gamma_rampsd_t* ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, `double` version.
 
@@ -760,7 +760,7 @@ Get the current gamma ramps for a CRTC, `double` version.
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_rampsd(libgamma_crtc_state_t* this, libgamma_gamma_rampsd_t ramps)
+cdef extern int libgamma_crtc_set_gamma_rampsd(libgamma_crtc_state_t* this, libgamma_gamma_rampsd_t ramps) nogil
 '''
 Set the gamma ramps for a CRTC, `double` version.
 

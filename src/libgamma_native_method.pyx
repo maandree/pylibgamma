@@ -117,7 +117,7 @@ cdef extern from "include-libgamma.h":
         # The gamma ramp for the blue channel.
 
 
-cdef extern int libgamma_gamma_ramps8_initialise(libgamma_gamma_ramps8_t* this)
+cdef extern int libgamma_gamma_ramps8_initialise(libgamma_gamma_ramps8_t* this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation.
@@ -129,7 +129,7 @@ sizes of the gamma ramps that should be allocated.
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly.
 '''
 
-cdef extern void libgamma_gamma_ramps8_free(libgamma_gamma_ramps8_t* this)
+cdef extern void libgamma_gamma_ramps8_free(libgamma_gamma_ramps8_t* this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_ramps8_initialise` or otherwise
@@ -140,7 +140,7 @@ to the structure.
 '''
 
 
-cdef extern int libgamma_gamma_ramps16_initialise(libgamma_gamma_ramps16_t* this)
+cdef extern int libgamma_gamma_ramps16_initialise(libgamma_gamma_ramps16_t* this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation.
@@ -152,7 +152,7 @@ sizes of the gamma ramps that should be allocated.
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly.
 '''
 
-cdef extern void libgamma_gamma_ramps16_free(libgamma_gamma_ramps16_t* this)
+cdef extern void libgamma_gamma_ramps16_free(libgamma_gamma_ramps16_t* this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_ramps16_initialise` or otherwise
@@ -163,7 +163,7 @@ to the structure.
 '''
 
 
-cdef extern int libgamma_gamma_ramps32_initialise(libgamma_gamma_ramps32_t* this)
+cdef extern int libgamma_gamma_ramps32_initialise(libgamma_gamma_ramps32_t* this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation.
@@ -175,7 +175,7 @@ sizes of the gamma ramps that should be allocated.
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly.
 '''
 
-cdef extern void libgamma_gamma_ramps32_free(libgamma_gamma_ramps32_t* this)
+cdef extern void libgamma_gamma_ramps32_free(libgamma_gamma_ramps32_t* this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_ramps32_initialise` or otherwise
@@ -186,7 +186,7 @@ to the structure.
 '''
 
 
-cdef extern int libgamma_gamma_ramps64_initialise(libgamma_gamma_ramps64_t* this)
+cdef extern int libgamma_gamma_ramps64_initialise(libgamma_gamma_ramps64_t* this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation.
@@ -198,7 +198,7 @@ sizes of the gamma ramps that should be allocated.
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly.
 '''
 
-cdef extern void libgamma_gamma_ramps64_free(libgamma_gamma_ramps64_t* this)
+cdef extern void libgamma_gamma_ramps64_free(libgamma_gamma_ramps64_t* this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_ramps64_initialise` or otherwise
@@ -209,7 +209,7 @@ to the structure.
 '''
 
 
-cdef extern int libgamma_gamma_rampsf_initialise(libgamma_gamma_rampsf_t* this)
+cdef extern int libgamma_gamma_rampsf_initialise(libgamma_gamma_rampsf_t* this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation.
@@ -221,7 +221,7 @@ sizes of the gamma ramps that should be allocated.
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly.
 '''
 
-cdef extern void libgamma_gamma_rampsf_free(libgamma_gamma_rampsf_t* this)
+cdef extern void libgamma_gamma_rampsf_free(libgamma_gamma_rampsf_t* this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_rampsf_initialise` or otherwise
@@ -232,7 +232,7 @@ to the structure.
 '''
 
 
-cdef extern int libgamma_gamma_rampsd_initialise(libgamma_gamma_rampsd_t* this)
+cdef extern int libgamma_gamma_rampsd_initialise(libgamma_gamma_rampsd_t* this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation.
@@ -244,7 +244,7 @@ sizes of the gamma ramps that should be allocated.
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly.
 '''
 
-cdef extern void libgamma_gamma_rampsd_free(libgamma_gamma_rampsd_t* this)
+cdef extern void libgamma_gamma_rampsd_free(libgamma_gamma_rampsd_t* this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_rampsd_initialise` or otherwise

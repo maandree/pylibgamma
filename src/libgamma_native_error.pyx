@@ -23,15 +23,15 @@ from posix.unistd cimport gid_t
 from libc.string cimport strerror as c_strerror
 
 
-cdef extern gid_t libgamma_group_gid_get()
-cdef extern void libgamma_group_gid_set(gid_t)
+cdef extern gid_t libgamma_group_gid_get() nogil
+cdef extern void libgamma_group_gid_set(gid_t) nogil
 '''
 Group that the user needs to be a member of if
 `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
 '''
 
-cdef extern const char* libgamma_group_name_get()
-cdef extern void libgamma_group_name_set(const char*)
+cdef extern const char* libgamma_group_name_get() nogil
+cdef extern void libgamma_group_name_set(const char*) nogil
 '''
 Group that the user needs to be a member of if
 `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
@@ -40,7 +40,7 @@ cannot be determined.
 '''
 
 
-cdef extern void libgamma_perror(const char* name, int error_code)
+cdef extern void libgamma_perror(const char* name, int error_code) nogil
 '''
 Prints an error to stderr in a `perror` fashion,
 however this function will not translate the `libgamma`
@@ -59,7 +59,7 @@ and, if known, its name.
 @param  value  The error code, may be an `errno` value.
 '''
 
-cdef extern const char* libgamma_name_of_error(int value)
+cdef extern const char* libgamma_name_of_error(int value) nogil
 '''
 Returns the name of the definition associated with a `libgamma` error code.
 
@@ -69,7 +69,7 @@ Returns the name of the definition associated with a `libgamma` error code.
                 should not be `free`:d.
 '''
 
-cdef extern int libgamma_value_of_error(const char* name)
+cdef extern int libgamma_value_of_error(const char* name) nogil
 '''
 Return the value of a `libgamma` error definition refered to by name.
 
