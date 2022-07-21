@@ -1,0 +1,2 @@
+PLATFORM = w32
+LIBEXT = dll

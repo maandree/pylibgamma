@@ -1,190 +1,62 @@
-# Copying and distribution of this file, with or without modification,
-# are permitted in any medium without royalty provided the copyright
-# notice and this notice are preserved.  This file is offered as-is,
-# without any warranty.
+.POSIX:
+
+CONFIGFILE = config.mk
+include $(CONFIGFILE)
+
+OS = linux
+include mk/$(OS).mk
 
 
-# The package path prefix, if you want to install to another root, set DESTDIR to that root
-PREFIX ?= /usr
-# The library path excluding prefix
-LIB ?= /lib
-# The resource path excluding prefix
-DATA ?= /share
-# The library path including prefix
-LIBDIR ?= $(PREFIX)$(LIB)
-# The resource path including prefix
-DATADIR ?= $(PREFIX)$(DATA)
-# The generic documentation path including prefix
-DOCDIR ?= $(DATADIR)/doc
-# The info manual documentation path including prefix
-INFODIR ?= $(DATADIR)/info
-# The license base path including prefix
-LICENSEDIR ?= $(DATADIR)/licenses
-
-# The target and host platform
-PLATFORM = posix
-
-# The major version number of the current Python installation
-PY_MAJOR = 3
-# The minor version number of the current Python installation
-PY_MINOR = 5
-# The version number of the current Python installation without a dot
-PY_VER = $(PY_MAJOR)$(PY_MINOR)
-# The version number of the current Python installation with a dot
-PY_VERSION = $(PY_MAJOR).$(PY_MINOR)
-
-# The directory for python modules
-PYTHONDIR = $(LIBDIR)/python$(PY_VERSION)
-
-# The name of the package as it should be installed
-PKGNAME = pylibgamma
+python         = python$(PYTHON_MAJOR)
+python_version = $(PYTHON_MAJOR).$(PYTHON_MINOR)
+python_ver     = $(PYTHON_MAJOR)$(PYTHON_MINOR)
+python_dir     = $(PREFIX)/lib/python$(python_version)/site-packages
+python_cache   = $(python_dir)/__pycache__
 
 
-# The installed pkg-config command
-PKGCONFIG ?= pkg-config
-# The installed cython command
-CYTHON ?= cython
-# The installed python command
-PYTHON = python$(PY_MAJOR)
+OBJ =\
+	libgamma_native_error.o\
+	libgamma_native_facade.o\
+	libgamma_native_method.o
+
+PYSRC =\
+	libgamma.py\
+	libgamma_error.py\
+	libgamma_facade.py\
+	libgamma_method.py
+
+LIBFILES = $(OBJ:.o=.$(LIBEXT))
+FILES = $(PYSRC) $(LIBFILES)
 
 
-# Libraries to link with using pkg-config
-LIBS = python$(PY_MAJOR)
+all: $(LIBFILES)
 
-# The C standard for C code compilation
-STD = c99
-# Optimisation settings for C code compilation
-OPTIMISE ?= -Og -g
+libgamma_native_error.pyx: libgamma_native_error.$(PLATFORM).pyx
+	cp -- $< $@
 
+.o.$(LIBEXT):
+	$(CC) -o $@ $< -shared $(LDFLAGS)
 
+.c.o:
+	$(CC) -fPIC -c -o $@ $< $$(pkg-config --cflags $(python)) $(CFLAGS) $(CPPFLAGS)
 
-# Flags to use when compiling
-CC_FLAGS = $$($(PKGCONFIG) --cflags $(LIBS)) -std=$(STD) \
-           $(OPTIMISE) -fPIC $(CFLAGS) $(CPPFLAGS)
+.pyx.c:
+	if ! cython -$(PYTHON_MAJOR) -v $< -o $@ ; then rm $@; false; fi
 
-# Flags to use when linking
-LD_FLAGS = $$($(PKGCONFIG) --libs $(LIBS)) -lgamma -std=$(STD) \
-           $(OPTIMISE) -shared $(LDFLAGS)
+install: $(LIBFILES)
+	mkdir -p -- "$(DESTDIR)$(python_dir)"
+	cp -- $(FILES) "$(DESTDIR)$(python_dir)/"
 
-
-# The suffixless basename of the .py-files
-PYTHON_SRC = libgamma_error libgamma_facade libgamma_method libgamma
-
-# The suffixless basename of the .py-files
-CYTHON_SRC = libgamma_native_error libgamma_native_facade libgamma_native_method
-
-
-# Filename extension for -OO optimised python files
-ifeq ($(shell test $(PY_VER) -ge 35 ; echo $$?),0)
-PY_OPT2_EXT = opt-2.pyc
-else
-PY_OPT2_EXT = pyo
-endif
-
-
-
-.PHONY: all pyc-files pyo-files so-files
-all: pyc-files pyo-files so-files
-pyc-files: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyc)
-pyo-files: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).$(PY_OPT2_EXT))
-so-files: $(foreach M,$(CYTHON_SRC),bin/$(M).so)
-
-bin/%.so: obj/%.o
-	@mkdir -p bin
-	$(CC) $(LD_FLAGS) -o $@ $^
-
-obj/%.o: obj/%.c src/*.h
-	$(CC) $(CC_FLAGS) -iquote"src" -c -o $@ $<
-
-obj/%.c: obj/%.pyx
-	if ! $(CYTHON) -3 -v $< ; then rm $@ ; false ; fi
-
-obj/libgamma_native_facade.pyx: src/libgamma_native_facade.pyx
-	@mkdir -p obj
-	cp $< $@
-
-obj/libgamma_native_method.pyx: src/libgamma_native_method.pyx
-	@mkdir -p obj
-	cp $< $@
-
-ifeq ($(PLATFORM),windows)
-obj/libgamma_native_error.pyx: src/libgamma_native_error.w32.pyx
-	@mkdir -p obj
-	cp $< $@
-else
-obj/libgamma_native_error.pyx: src/libgamma_native_error.pyx
-	@mkdir -p obj
-	cp $< $@
-endif
-
-src/__pycache__/%.cpython-$(PY_VER).pyc: src/%.py
-	$(PYTHON) -m compileall $<
-
-src/__pycache__/%.cpython-$(PY_VER).$(PY_OPT2_EXT): src/%.py
-	$(PYTHON) -OO -m compileall $<
-
-
-.PHONY: install
-install: install-base
-
-.PHONY: install-all
-install-all: install-base
-
-.PHONY: install-base
-install-base: install-lib install-copyright
-
-
-.PHONY: install-lib
-install-lib: install-source install-compiled install-optimised install-native
-
-.PHONY: install-source
-install-source: $(foreach M,$(PYTHON_SRC),src/$(M).py)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)"
-	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)"
-
-.PHONY: install-compiled
-install-compiled: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).pyc)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/__pycache__"
-	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/__pycache__"
-
-.PHONY: install-optimised
-install-optimised: $(foreach M,$(PYTHON_SRC),src/__pycache__/$(M).cpython-$(PY_VER).$(PY_OPT2_EXT))
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)/__pycache__"
-	install -m644 $^ -- "$(DESTDIR)$(PYTHONDIR)/__pycache__"
-
-.PHONY: install-native
-install-native: $(foreach M,$(CYTHON_SRC),bin/$(M).so)
-	install -dm755 -- "$(DESTDIR)$(PYTHONDIR)"
-	install -m755 $^ -- "$(DESTDIR)$(PYTHONDIR)"
-
-
-.PHONY: install-copyright
-install-copyright: install-copying install-license
-
-.PHONY: install-copying
-install-copying: COPYING
-	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-	install -m644 $^ -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-
-.PHONY: install-license
-install-license: LICENSE
-	install -dm755 -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-	install -m644 $^ -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-
-
-
-.PHONY: uninstall
 uninstall:
-	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/LICENSE"
-	-rm -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)/COPYING"
-	-rmdir -- "$(DESTDIR)$(LICENSEDIR)/$(PKGNAME)"
-	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/__pycache__/$(M).cpython-$(PY_VER).$(PY_OPT2_EXT)")
-	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/__pycache__/$(M).cpython-$(PY_VER).pyc")
-	-rm -- $(foreach M,$(PYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/$(M).py")
-	-rm -- $(foreach M,$(CYTHON_SRC),"$(DESTDIR)$(PYTHONDIR)/$(M).so")
+	-cd -- "$(DESTDIR)$(python_dir)" && rm -f -- $(FILES)
 
+run-test: $(LIBFILES)
+	./test.py
 
-.PHONY: clean
 clean:
-	-rm -r obj bin src/__pycache__
+	-rm -rf -- *.$(LIBEXT) *.o *_native_*.c *.pyc *.pyo __pycache__ libgamma_native_error.pyx
 
+.SUFFIXES:
+.SUFFIXES: .$(LIBEXT) .o .c .pyx
+
+.PHONY: all install uninstall check run-test clean

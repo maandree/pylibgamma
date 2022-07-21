@@ -1,0 +1,2 @@
+PLATFORM = posix
+LIBEXT = so

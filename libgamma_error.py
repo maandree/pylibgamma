@@ -1,74 +1,55 @@
-# -*- python -*-
-'''
-pylibgamma — Python 3 wrapper for libgamma
-Copyright © 2014  Mattias Andrée (maandree@member.fsf.org)
-
-This library is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This library is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this library.  If not, see <http://www.gnu.org/licenses/>.
-'''
-
-
+# See LICENSE file for copyright and license details.
 
 class LibgammaGroup:
     '''
     Class for `group`
     '''
-    
+
     @property
     def gid(self) -> int:
         '''
-        Getter.
+        Getter
         
         Group that the user needs to be a member of if
-        `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
+        `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned
         '''
         from libgamma_native_error import libgamma_native_get_group_gid
         return libgamma_native_get_group_gid()
-    
+
     @gid.setter
     def gid(self, value : int):
         '''
-        Setter.
+        Setter
         
         Group that the user needs to be a member of if
-        `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
+        `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned
         '''
         from libgamma_native_error import libgamma_native_set_group_gid
         libgamma_native_set_group_gid(value)
-    
-    
+
+
     @property
     def name(self) -> str:
         '''
-        Getter.
+        Getter
         
         Group that the user needs to be a member of if
         `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
         `None` if the name of the group `group.gid`
-        cannot be determined.
+        cannot be determined
         '''
         from libgamma_native_error import libgamma_native_get_group_name
         return libgamma_native_get_group_name()
-    
+
     @name.setter
     def name(self, value : str):
         '''
-        Setter.
+        Setter
         
         Group that the user needs to be a member of if
         `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned,
         `None` if the name of the group `group.gid`
-        cannot be determined.
+        cannot be determined
         '''
         from libgamma_native_error import libgamma_native_set_group_name
         libgamma_native_set_group_name(value)
@@ -77,7 +58,7 @@ class LibgammaGroup:
 group = LibgammaGroup()
 '''
  Group that the user needs to be a member of if
-`LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned.
+`LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned
 '''
 
 
@@ -96,8 +77,8 @@ def perror(name : str, error_code : int):
     required group will be printed with its numerical value
     and, if known, its name.
     
-    @param  name   The text to add at the beginning.
-    @param  value  The error code, may be an `errno` value.
+    @param  name   The text to add at the beginning
+    @param  value  The error code, may be an `errno` value
     '''
     from libgamma_native_error import libgamma_native_perror
     libgamma_native_perror(name, error_code)
@@ -105,11 +86,11 @@ def perror(name : str, error_code : int):
 
 def name_of_error(value : int) -> str:
     '''
-    Returns the name of the definition associated with a `libgamma` error code.
+    Returns the name of the definition associated with a `libgamma` error code
     
-    @param   value  The error code.
+    @param   value  The error code
     @return         The name of the definition associated with the error code,
-                    `None` if the error code does not exist.
+                    `None` if the error code does not exist
     '''
     from libgamma_native_error import libgamma_native_name_of_error
     return libgamma_native_name_of_error(value)
@@ -117,11 +98,11 @@ def name_of_error(value : int) -> str:
 
 def value_of_error(name : str) -> int:
     '''
-    Return the value of a `libgamma` error definition refered to by name.
+    Return the value of a `libgamma` error definition refered to by name
     
-    @param   name  The name of the definition associated with the error code.
+    @param   name  The name of the definition associated with the error code
     @return        The error code, zero if the name is `None`
-                   or does not refer to a `libgamma` error.
+                   or does not refer to a `libgamma` error
     '''
     from libgamma_native_error import libgamma_native_value_of_error
     return libgamma_native_value_of_error(name)
@@ -131,126 +112,126 @@ def value_of_error(name : str) -> int:
 LIBGAMMA_ERRNO_SET = -1
 '''
 `errno` has be set with a standard error number
-to indicate the what has gone wrong.
+to indicate the what has gone wrong
 '''
 
 LIBGAMMA_NO_SUCH_ADJUSTMENT_METHOD = -2
 '''
 The selected adjustment method does not exist
-or has been excluded at compile-time.
+or has been excluded at compile-time
 '''
 
 LIBGAMMA_NO_SUCH_SITE = -3
 '''
-The selected site does not exist.
+The selected site does not exist
 '''
 
 LIBGAMMA_NO_SUCH_PARTITION = -4
 '''
-The selected partition does not exist.
+The selected partition does not exist
 '''
 
 LIBGAMMA_NO_SUCH_CRTC = -5
 '''
-The selected CRTC does not exist.
+The selected CRTC does not exist
 '''
 
 LIBGAMMA_IMPOSSIBLE_AMOUNT = -6
 '''
 Counter overflowed when counting the number
-of available items.
+of available items
 '''
 
 LIBGAMMA_CONNECTOR_DISABLED = -7
 '''
 The selected connector is disabled, it does
-not have a CRTC.
+not have a CRTC
 '''
 
 LIBGAMMA_OPEN_CRTC_FAILED = -8
 '''
 The selected CRTC could not be opened,
-reason unknown.
+reason unknown
 '''
 
 LIBGAMMA_CRTC_INFO_NOT_SUPPORTED = -9
 '''
 The CRTC information field is not supported
-by the adjustment method.
+by the adjustment method
 '''
 
 LIBGAMMA_GAMMA_RAMP_READ_FAILED = -10
 '''
 Failed to read the current gamma ramps for
-the selected CRTC, reason unknown.
+the selected CRTC, reason unknown
 '''
 
 LIBGAMMA_GAMMA_RAMP_WRITE_FAILED = -11
 '''
 Failed to write the current gamma ramps for
-the selected CRTC, reason unknown.
+the selected CRTC, reason unknown
 '''
 
 LIBGAMMA_GAMMA_RAMP_SIZE_CHANGED = -12
 '''
 The specified ramp sizes does not match the
 ramps sizes returned by the adjustment methods
-in response to the query/command.
+in response to the query/command
 '''
 
 LIBGAMMA_MIXED_GAMMA_RAMP_SIZE = -13
 '''
 The specified ramp sizes are not identical
-which is required by the adjustment method.
-(Only returned in debug mode.)
+which is required by the adjustment method
+(Only returned in debug mode)
 '''
 
 LIBGAMMA_WRONG_GAMMA_RAMP_SIZE = -14
 '''
 The specified ramp sizes are not supported
-by the adjustment method.
-(Only returned in debug mode.)
+by the adjustment method
+(Only returned in debug mode)
 '''
 
 LIBGAMMA_SINGLETON_GAMMA_RAMP = -15
 '''
 The adjustment method reported that the gamma
-ramps size is 1, or perhaps even zero or negative.
+ramps size is 1, or perhaps even zero or negative
 '''
 
 LIBGAMMA_LIST_CRTCS_FAILED = -16
 '''
 The adjustment method failed to list
-available CRTC:s, reason unknown.
+available CRTC:s, reason unknown
 '''
 
 LIBGAMMA_ACQUIRING_MODE_RESOURCES_FAILED = -17
 '''
 Failed to acquire mode resources from the
-adjustment method.
+adjustment method
 '''
 
 LIBGAMMA_NEGATIVE_PARTITION_COUNT = -18
 '''
 The adjustment method reported that a negative
-number of partitions exists in the site.
+number of partitions exists in the site
 '''
 
 LIBGAMMA_NEGATIVE_CRTC_COUNT = -19
 '''
 The adjustment method reported that a negative
-number of CRTC:s exists in the partition.
+number of CRTC:s exists in the partition
 '''
 
 LIBGAMMA_DEVICE_RESTRICTED = -20
 '''
 Device cannot be access becauses of
-insufficient permissions.
+insufficient permissions
 '''
 
 LIBGAMMA_DEVICE_ACCESS_FAILED = -21
 '''
-Device cannot be access, reason unknown.
+Device cannot be access, reason unknown
 '''
 
 LIBGAMMA_DEVICE_REQUIRE_GROUP = -22
@@ -258,150 +239,150 @@ LIBGAMMA_DEVICE_REQUIRE_GROUP = -22
 Device cannot be access, membership of the
 `group.gid` (named by `group.name` (can be
 `None`, if so `errno` may have been set to
-tell why)) is required.
+tell why)) is required
 '''
 
 LIBGAMMA_GRAPHICS_CARD_REMOVED = -23
 '''
-The graphics card appear to have been removed.
+The graphics card appear to have been removed
 '''
 
 LIBGAMMA_STATE_UNKNOWN = -24
 '''
-The state of the requested information is unknown.
+The state of the requested information is unknown
 '''
 
 LIBGAMMA_CONNECTOR_UNKNOWN = -25
 '''
 Failed to determine which connector the
-CRTC belongs to.
+CRTC belongs to
 '''
 
 LIBGAMMA_CONNECTOR_TYPE_NOT_RECOGNISED = -26
 '''
 The detected connector type is not listed
-in this library and has to be updated.
+in this library and has to be updated
 '''
 
 LIBGAMMA_SUBPIXEL_ORDER_NOT_RECOGNISED = -27
 '''
 The detected subpixel order is not listed
-in this library and has to be updated.
+in this library and has to be updated
 '''
 
 LIBGAMMA_EDID_LENGTH_UNSUPPORTED = -28
 '''
 The length of the EDID does not match that
-of any supported EDID structure revision.
+of any supported EDID structure revision
 '''
 
 LIBGAMMA_EDID_WRONG_MAGIC_NUMBER = -29
 '''
 The magic number in the EDID does not match
-that of any supported EDID structure revision.
+that of any supported EDID structure revision
 '''
 
 LIBGAMMA_EDID_REVISION_UNSUPPORTED = -30
 '''
 The EDID structure revision used by the
-monitor is not supported.
+monitor is not supported
 '''
 
 LIBGAMMA_GAMMA_NOT_SPECIFIED = -31
 '''
 The gamma characteristics field in the EDID
-is left unspecified.
-(This could be considered a non-error.)
+is left unspecified
+(This could be considered a non-error)
 '''
 
 LIBGAMMA_EDID_CHECKSUM_ERROR = -32
 '''
 The checksum in the EDID is incorrect, all
 request information has been provided
-by you cannot count on it.
+by you cannot count on it
 '''
 
 LIBGAMMA_GAMMA_NOT_SPECIFIED_AND_EDID_CHECKSUM_ERROR = -33
 '''
 Both of the errors `LIBGAMMA_GAMMA_NOT_SPECIFIED`
-and `LIBGAMMA_EDID_CHECKSUM_ERROR` have occurred.
+and `LIBGAMMA_EDID_CHECKSUM_ERROR` have occurred
 '''
 
 LIBGAMMA_GAMMA_RAMPS_SIZE_QUERY_FAILED = -34
 '''
 Failed to query the gamma ramps size from the
-adjustment method, reason unknown.
+adjustment method, reason unknown
 '''
 
 LIBGAMMA_OPEN_PARTITION_FAILED = -35
 '''
 The selected partition could not be opened,
-reason unknown.
+reason unknown
 '''
 
 LIBGAMMA_OPEN_SITE_FAILED = -36
 '''
 The selected site could not be opened,
-reason unknown.
+reason unknown
 '''
 
 LIBGAMMA_PROTOCOL_VERSION_QUERY_FAILED = -37
 '''
 Failed to query the adjustment method for
-its protocol version, reason unknown.
+its protocol version, reason unknown
 '''
 
 LIBGAMMA_PROTOCOL_VERSION_NOT_SUPPORTED = -38
 '''
 The adjustment method's version of its
-protocol is not supported.
+protocol is not supported
 '''
 
 LIBGAMMA_LIST_PARTITIONS_FAILED = -39
 '''
 The adjustment method failed to list
-available partitions, reason unknown.
+available partitions, reason unknown
 '''
 
 LIBGAMMA_NULL_PARTITION = -40
 '''
 Partition exists by index, but the partition
-at that index does not exist.
+at that index does not exist
 '''
 
 LIBGAMMA_NOT_CONNECTED = -41
 '''
 There is not monitor connected to the
-connector of the selected CRTC.
+connector of the selected CRTC
 '''
 
 LIBGAMMA_REPLY_VALUE_EXTRACTION_FAILED = -42
 '''
 Data extraction from a reply from the
-adjustment method failed, reason unknown.
+adjustment method failed, reason unknown
 '''
 
 LIBGAMMA_EDID_NOT_FOUND = -43
 '''
-No EDID property was found on the output.
+No EDID property was found on the output
 '''
 
 LIBGAMMA_LIST_PROPERTIES_FAILED = -44
 '''
 Failed to list properties on the output,
-reason unknown.
+reason unknown
 '''
 
 LIBGAMMA_PROPERTY_VALUE_QUERY_FAILED = -45
 '''
 Failed to query a property's value from
-the output, reason unknown.
+the output, reason unknown
 '''
 
 LIBGAMMA_OUTPUT_INFORMATION_QUERY_FAILED = -46
 '''
 A request for information on an output
-failed, reason unknown.
+failed, reason unknown
 '''
 
 
@@ -414,50 +395,47 @@ update your program for new errors.
 '''
 
 
-
 class LibgammaError(Exception):
     '''
-    libgamma error class.
+    libgamma error class
     
-    @variable  errno     The error code.
-    @variable  strerror  The name of the error.
+    @variable  errno     The error code
+    @variable  strerror  The name of the error
     '''
-    
+
     def __init__(self, errno : int, strerror : str):
         '''
-        Constructor.
+        Constructor
         
-        @param  errno     The error code.
-        @param  strerror  The name of the error.
+        @param  errno     The error code
+        @param  strerror  The name of the error
         '''
         self.errno = errno
         self.strerror = strerror
-    
+
     def __str__(self) -> str:
         '''
-        Return the name of the error.
+        Return the name of the error
         
-        @return  The name of the error.
+        @return  The name of the error
         '''
         return self.strerror
-    
-    
+
     def __repr__(self) -> str:
         '''
-        Create a string representation of the error.
+        Create a string representation of the error
         
-        @return  A string representation of the error.
+        @return  A string representation of the error
         '''
         return 'LibgammaError(%i, %s)' % (self.errno, repr(self.strerror))
 
 
-
 def create_error(error_code : int) -> Exception:
     '''
-    Create an exception from an error code.
+    Create an exception from an error code
     
-    @param   error_code              The error code.
-    @return  :OSError|LibgammaError  The error as a throwable object.
+    @param   error_code              The error code
+    @return  :OSError|LibgammaError  The error as a throwable object
     '''
     if error_code == LIBGAMMA_ERRNO_SET:
         import ctypes
@@ -473,4 +451,3 @@ def create_error(error_code : int) -> Exception:
         e = LibgammaError(error_code, strerror)
     
     return e
-
