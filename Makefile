@@ -7,13 +7,6 @@ OS = linux
 include mk/$(OS).mk
 
 
-python         = python$(PYTHON_MAJOR)
-python_version = $(PYTHON_MAJOR).$(PYTHON_MINOR)
-python_ver     = $(PYTHON_MAJOR)$(PYTHON_MINOR)
-python_dir     = $(PREFIX)/lib/python$(python_version)/site-packages
-python_cache   = $(python_dir)/__pycache__
-
-
 OBJ =\
 	libgamma_native_error.o\
 	libgamma_native_facade.o\
@@ -38,17 +31,17 @@ libgamma_native_error.pyx: libgamma_native_error.$(PLATFORM).pyx
 	$(CC) -o $@ $< -shared $(LDFLAGS)
 
 .c.o:
-	$(CC) -fPIC -c -o $@ $< $$(pkg-config --cflags $(python)) $(CFLAGS) $(CPPFLAGS)
+	$(CC) -fPIC -c -o $@ $< $$(pkg-config --cflags $(PYTHON)) $(CFLAGS) $(CPPFLAGS)
 
 .pyx.c:
-	if ! cython -$(PYTHON_MAJOR) -v $< -o $@ ; then rm $@; false; fi
+	if ! $(CYTHON) -$(PYTHON_MAJOR) -v $< -o $@ ; then rm $@; false; fi
 
 install: $(LIBFILES)
-	mkdir -p -- "$(DESTDIR)$(python_dir)"
-	cp -- $(FILES) "$(DESTDIR)$(python_dir)/"
+	mkdir -p -- "$(DESTDIR)$(PYTHON_DIR)"
+	cp -- $(FILES) "$(DESTDIR)$(PYTHON_DIR)/"
 
 uninstall:
-	-cd -- "$(DESTDIR)$(python_dir)" && rm -f -- $(FILES)
+	-cd -- "$(DESTDIR)$(PYTHON_DIR)" && rm -f -- $(FILES)
 
 run-test: $(LIBFILES)
 	./test.py
