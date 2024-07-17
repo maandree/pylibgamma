@@ -13,11 +13,11 @@ ctypedef int libgamma_connector_type_t
 
 cdef extern from "include-libgamma.h":
 
-    ctypedef struct libgamma_method_capabilities_t:
+    ctypedef struct struct_libgamma_method_capabilities "struct libgamma_method_capabilities":
         # Capabilities of adjustment methods
 
         int32_t crtc_information
-        # OR of the CRTC information fields in `libgamma_crtc_information_t`
+        # OR of the CRTC information fields in `struct libgamma_crtc_information`
         # that may (but can fail) be read successfully
 
         unsigned default_site_known # : 1
@@ -50,16 +50,16 @@ cdef extern from "include-libgamma.h":
 
         unsigned identical_gamma_sizes # : 1
         # Whether the `red_gamma_size`, `green_gamma_size` and `blue_gamma_size`
-        # fields in `libgamma_crtc_information_t` will always have the same
+        # fields in `struct libgamma_crtc_information` will always have the same
         # values as each other for the adjustment method
 
         unsigned fixed_gamma_size # : 1
         # Whether the `red_gamma_size`, `green_gamma_size` and `blue_gamma_size`
-        # fields in `libgamma_crtc_information_t` will always be filled with the
+        # fields in `struct libgamma_crtc_information` will always be filled with the
         # same value for the adjustment method
 
         unsigned fixed_gamma_depth # : 1
-        # Whether the `gamma_depth` field in `libgamma_crtc_information_t`
+        # Whether the `gamma_depth` field in `struct libgamma_crtc_information`
         # will always be filled with the same value for the adjustment method
 
         unsigned real # : 1
@@ -68,7 +68,7 @@ cdef extern from "include-libgamma.h":
         unsigned fake # : 1
         # Whether the adjustment method is implement using a translation layer
 
-    ctypedef struct libgamma_site_state_t:
+    ctypedef struct libgamma_site_state "struct libgamma_site_state":
         # Site state
         # 
         # On operating systems that integrate a graphical environment
@@ -104,7 +104,7 @@ cdef extern from "include-libgamma.h":
         # On hardware-level adjustment methods, such as Direct
         # Rendering Manager, a partition is a graphics card.
 
-    ctypedef struct libgamma_partition_state_t:
+    ctypedef struct libgamma_partition_state "struct libgamma_partition_state":
         # Partition state
         # 
         # Probably the majority of display server only one partition
@@ -120,7 +120,7 @@ cdef extern from "include-libgamma.h":
         # Adjustment method implementation specific data.
         # You as a user of this library should not touch this.
 
-        libgamma_site_state_t* site
+        libgamma_site_state *site
         # The site this partition belongs to
 
         size_t partition
@@ -131,7 +131,7 @@ cdef extern from "include-libgamma.h":
         # partition. Note that the CRTC:s are not necessarily
         # online.
 
-    ctypedef struct libgamma_crtc_state_t:
+    ctypedef struct libgamma_crtc_state "struct libgamma_crtc_state":
         # Cathode ray tube controller state
         # 
         # The CRTC controls the gamma ramps for the
@@ -142,13 +142,13 @@ cdef extern from "include-libgamma.h":
         # Adjustment method implementation specific data.
         # You as a user of this library should not touch this.
 
-        libgamma_partition_state_t* partition
+        libgamma_partition_state *partition
         # The partition this CRTC belongs to
 
         size_t crtc
         # The index of the CRTC within its partition
 
-    ctypedef struct libgamma_crtc_information_t:
+    ctypedef struct libgamma_crtc_information "struct libgamma_crtc_information":
         # Cathode ray tube controller information data structure
 
         unsigned char *edid
@@ -323,7 +323,7 @@ cdef extern from "include-libgamma.h":
         # when the reading failed, otherwise (negative) the value
         # of an error identifier provided by this library
 
-    ctypedef struct libgamma_gamma_ramps8_t:
+    ctypedef struct libgamma_gamma_ramps8 "struct libgamma_gamma_ramps8":
         # Gamma ramp structure for 8-bit gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -332,7 +332,7 @@ cdef extern from "include-libgamma.h":
         uint8_t *green    # The gamma ramp for the green channel
         uint8_t *blue     # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_ramps16_t:
+    ctypedef struct libgamma_gamma_ramps16 "struct libgamma_gamma_ramps16":
         # Gamma ramp structure for 16-bit gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -341,7 +341,7 @@ cdef extern from "include-libgamma.h":
         uint16_t *green   # The gamma ramp for the green channel
         uint16_t *blue    # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_ramps32_t:
+    ctypedef struct libgamma_gamma_ramps32 "struct libgamma_gamma_ramps32":
         # Gamma ramp structure for 32-bit gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -350,7 +350,7 @@ cdef extern from "include-libgamma.h":
         uint32_t *green   # The gamma ramp for the green channel
         uint32_t *blue    # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_ramps64_t:
+    ctypedef struct libgamma_gamma_ramps64 "struct libgamma_gamma_ramps64":
         # Gamma ramp structure for 64-bit gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -359,7 +359,7 @@ cdef extern from "include-libgamma.h":
         uint64_t *green   # The gamma ramp for the green channel
         uint64_t *blue    # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_rampsf_t:
+    ctypedef struct libgamma_gamma_rampsf "struct libgamma_gamma_rampsf":
         # Gamma ramp structure for `float` gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -368,7 +368,7 @@ cdef extern from "include-libgamma.h":
         float *green      # The gamma ramp for the green channel
         float *blue       # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_rampsd_t:
+    ctypedef struct libgamma_gamma_rampsd "struct libgamma_gamma_rampsd":
         # Gamma ramp structure for `double` gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -408,16 +408,20 @@ identified as not available under the rationale that the library may be out of d
 '''
 
 
-cdef extern void libgamma_method_capabilities(libgamma_method_capabilities_t *this, int method) nogil
+cdef extern int libgamma_method_capabilities(struct_libgamma_method_capabilities *this, size_t size, int method) nogil
 '''
 Return the capabilities of an adjustment method
 
-@param  this    The data structure to fill with the method's capabilities
-@param  method  The adjustment method (display server and protocol)
+@param   this    The data structure to fill with the method's capabilities
+@param   size    Should be `sizeof(*this)`, used to let the library know which version 
+                 of the structure is used so that it does not write outside of it
+@param   method  The adjustment method (display server and protocol)
+@return          Zero on success, otherwise (negative) the value of an
+                 error identifier provided by this library
 '''
 
 
-cdef extern char *libgamma_method_default_site(int method) nogil
+cdef extern const char *libgamma_method_default_site(int method) nogil
 '''
 Return the default site for an adjustment method
 
@@ -441,7 +445,7 @@ the default site for an adjustment method
 '''
 
 
-cdef extern int libgamma_site_initialise(libgamma_site_state_t *this, int method, char *site) nogil
+cdef extern int libgamma_site_initialise(libgamma_site_state *this, int method, char *site) nogil
 '''
 Initialise an allocated site state
 
@@ -458,7 +462,7 @@ Initialise an allocated site state
 '''
 
 
-cdef extern void libgamma_site_free(libgamma_site_state_t *this) nogil
+cdef extern void libgamma_site_free(libgamma_site_state *this) nogil
 '''
 Release all resources held by a site state
 and free the site state pointer
@@ -467,7 +471,7 @@ and free the site state pointer
 '''
 
 
-cdef extern int libgamma_site_restore(libgamma_site_state_t *this) nogil
+cdef extern int libgamma_site_restore(libgamma_site_state *this) nogil
 '''
 Restore the gamma ramps all CRTC:s with a site to the system settings
 
@@ -477,7 +481,7 @@ Restore the gamma ramps all CRTC:s with a site to the system settings
 '''
 
 
-cdef extern int libgamma_partition_initialise(libgamma_partition_state_t *this, libgamma_site_state_t* site, size_t partition) nogil
+cdef extern int libgamma_partition_initialise(libgamma_partition_state *this, libgamma_site_state* site, size_t partition) nogil
 '''
 Initialise an allocated partition state
 
@@ -489,7 +493,7 @@ Initialise an allocated partition state
 '''
 
 
-cdef extern void libgamma_partition_free(libgamma_partition_state_t *this) nogil
+cdef extern void libgamma_partition_free(libgamma_partition_state *this) nogil
 '''
 Release all resources held by a partition state
 and free the partition state pointer
@@ -498,7 +502,7 @@ and free the partition state pointer
 '''
 
 
-cdef extern int libgamma_partition_restore(libgamma_partition_state_t *this) nogil
+cdef extern int libgamma_partition_restore(libgamma_partition_state *this) nogil
 '''
 Restore the gamma ramps all CRTC:s with a partition to the system settings
 
@@ -508,7 +512,7 @@ Restore the gamma ramps all CRTC:s with a partition to the system settings
 '''
 
 
-cdef extern int libgamma_crtc_initialise(libgamma_crtc_state_t *this, libgamma_partition_state_t *partition, size_t crtc) nogil
+cdef extern int libgamma_crtc_initialise(libgamma_crtc_state *this, libgamma_partition_state *partition, size_t crtc) nogil
 '''
 Initialise an allocated CRTC state
 
@@ -520,7 +524,7 @@ Initialise an allocated CRTC state
 '''
 
 
-cdef extern void libgamma_crtc_free(libgamma_crtc_state_t *this) nogil
+cdef extern void libgamma_crtc_free(libgamma_crtc_state *this) nogil
 '''
 Release all resources held by a CRTC state
 and free the CRTC state pointer
@@ -529,7 +533,7 @@ and free the CRTC state pointer
 '''
 
 
-cdef extern int libgamma_crtc_restore(libgamma_crtc_state_t *this) nogil
+cdef extern int libgamma_crtc_restore(libgamma_crtc_state *this) nogil
 '''
 Restore the gamma ramps for a CRTC to the system settings for that CRTC
 
@@ -539,18 +543,21 @@ Restore the gamma ramps for a CRTC to the system settings for that CRTC
 '''
 
 
-cdef extern int libgamma_get_crtc_information(libgamma_crtc_information_t *this, libgamma_crtc_state_t *crtc, int32_t fields) nogil
+cdef extern int libgamma_get_crtc_information(libgamma_crtc_information *this, size_t size,
+                                              libgamma_crtc_state *crtc, unsigned long long fields) nogil
 '''
 Read information about a CRTC
 
 @param   this    Instance of a data structure to fill with the information about the CRTC
+@param   size    Should be `sizeof(*this)`, used to let the library know which version
+                 of the structure is used so that it does not write outside of it
 @param   crtc    The state of the CRTC whose information should be read
 @param   fields  OR:ed identifiers for the information about the CRTC that should be read
 @return          Zero on success, -1 on error; on error refer to the error reports in `this`
 '''
 
 
-cdef extern void libgamma_crtc_information_destroy(libgamma_crtc_information_t *this) nogil
+cdef extern void libgamma_crtc_information_destroy(libgamma_crtc_information *this) nogil
 '''
 Release all resources in an information data structure for a CRTC
 
@@ -558,7 +565,7 @@ Release all resources in an information data structure for a CRTC
 '''
 
 
-cdef extern int libgamma_crtc_get_gamma_ramps8(libgamma_crtc_state_t *this, libgamma_gamma_ramps8_t *ramps) nogil
+cdef extern int libgamma_crtc_get_gamma_ramps8(libgamma_crtc_state *this, libgamma_gamma_ramps8 *ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, 8-bit gamma-depth version
 
@@ -569,7 +576,7 @@ Get the current gamma ramps for a CRTC, 8-bit gamma-depth version
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_ramps8(libgamma_crtc_state_t *this, libgamma_gamma_ramps8_t ramps) nogil
+cdef extern int libgamma_crtc_set_gamma_ramps8(libgamma_crtc_state *this, const libgamma_gamma_ramps8 *ramps) nogil
 '''
 Set the gamma ramps for a CRTC, 8-bit gamma-depth version
 
@@ -580,7 +587,7 @@ Set the gamma ramps for a CRTC, 8-bit gamma-depth version
 '''
 
 
-cdef extern int libgamma_crtc_get_gamma_ramps16(libgamma_crtc_state_t *this, libgamma_gamma_ramps16_t *ramps) nogil
+cdef extern int libgamma_crtc_get_gamma_ramps16(libgamma_crtc_state *this, libgamma_gamma_ramps16 *ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, 16-bit gamma-depth version
 
@@ -591,7 +598,7 @@ Get the current gamma ramps for a CRTC, 16-bit gamma-depth version
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_ramps16(libgamma_crtc_state_t *this, libgamma_gamma_ramps16_t ramps) nogil
+cdef extern int libgamma_crtc_set_gamma_ramps16(libgamma_crtc_state *this, const libgamma_gamma_ramps16 *ramps) nogil
 '''
 Set the gamma ramps for a CRTC, 16-bit gamma-depth version
 
@@ -602,7 +609,7 @@ Set the gamma ramps for a CRTC, 16-bit gamma-depth version
 '''
 
 
-cdef extern int libgamma_crtc_get_gamma_ramps32(libgamma_crtc_state_t *this, libgamma_gamma_ramps32_t *ramps) nogil
+cdef extern int libgamma_crtc_get_gamma_ramps32(libgamma_crtc_state *this, libgamma_gamma_ramps32 *ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, 32-bit gamma-depth version
 
@@ -613,7 +620,7 @@ Get the current gamma ramps for a CRTC, 32-bit gamma-depth version
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_ramps32(libgamma_crtc_state_t *this, libgamma_gamma_ramps32_t ramps) nogil
+cdef extern int libgamma_crtc_set_gamma_ramps32(libgamma_crtc_state *this, const libgamma_gamma_ramps32 *ramps) nogil
 '''
 Set the gamma ramps for a CRTC, 32-bit gamma-depth version
 
@@ -624,7 +631,7 @@ Set the gamma ramps for a CRTC, 32-bit gamma-depth version
 '''
 
 
-cdef extern int libgamma_crtc_get_gamma_ramps64(libgamma_crtc_state_t *this, libgamma_gamma_ramps64_t *ramps) nogil
+cdef extern int libgamma_crtc_get_gamma_ramps64(libgamma_crtc_state *this, libgamma_gamma_ramps64 *ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, 64-bit gamma-depth version
 
@@ -635,7 +642,7 @@ Get the current gamma ramps for a CRTC, 64-bit gamma-depth version
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_ramps64(libgamma_crtc_state_t *this, libgamma_gamma_ramps64_t ramps) nogil
+cdef extern int libgamma_crtc_set_gamma_ramps64(libgamma_crtc_state *this, const libgamma_gamma_ramps64 *ramps) nogil
 '''
 Set the gamma ramps for a CRTC, 64-bit gamma-depth version
 
@@ -646,7 +653,7 @@ Set the gamma ramps for a CRTC, 64-bit gamma-depth version
 '''
 
 
-cdef extern int libgamma_crtc_get_gamma_rampsf(libgamma_crtc_state_t *this, libgamma_gamma_rampsf_t *ramps) nogil
+cdef extern int libgamma_crtc_get_gamma_rampsf(libgamma_crtc_state *this, libgamma_gamma_rampsf *ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, `float` version
 
@@ -657,7 +664,7 @@ Get the current gamma ramps for a CRTC, `float` version
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_rampsf(libgamma_crtc_state_t *this, libgamma_gamma_rampsf_t ramps) nogil
+cdef extern int libgamma_crtc_set_gamma_rampsf(libgamma_crtc_state *this, const libgamma_gamma_rampsf *ramps) nogil
 '''
 Set the gamma ramps for a CRTC, `float` version
 
@@ -669,7 +676,7 @@ Set the gamma ramps for a CRTC, `float` version
 
 
 
-cdef extern int libgamma_crtc_get_gamma_rampsd(libgamma_crtc_state_t *this, libgamma_gamma_rampsd_t *ramps) nogil
+cdef extern int libgamma_crtc_get_gamma_rampsd(libgamma_crtc_state *this, libgamma_gamma_rampsd *ramps) nogil
 '''
 Get the current gamma ramps for a CRTC, `double` version
 
@@ -680,7 +687,7 @@ Get the current gamma ramps for a CRTC, `double` version
 '''
 
 
-cdef extern int libgamma_crtc_set_gamma_rampsd(libgamma_crtc_state_t *this, libgamma_gamma_rampsd_t ramps) nogil
+cdef extern int libgamma_crtc_set_gamma_rampsd(libgamma_crtc_state *this, const libgamma_gamma_rampsd *ramps) nogil
 '''
 Set the gamma ramps for a CRTC, `double` version
 
@@ -706,7 +713,7 @@ def libgamma_native_list_methods(operation : int) -> list:
     '''
     cdef int *methods
     cdef size_t buf_size
-    cdef size_t r
+    cdef size_t r, r2
     buf_size = 6
     methods = <int *>malloc(buf_size * sizeof(size_t))
     if methods == NULL:
@@ -718,7 +725,9 @@ def libgamma_native_list_methods(operation : int) -> list:
         methods = <int *>malloc(buf_size * sizeof(size_t))
         if methods == NULL:
             raise MemoryError()
-        libgamma_list_methods(methods, buf_size, operation)
+        r2 = libgamma_list_methods(methods, buf_size, operation)
+        if r2 < r:
+            r = r2
     rc = []
     for i in range(r):
         rc.append(methods[i])
@@ -744,8 +753,10 @@ def libgamma_native_method_capabilities(method : int) -> tuple:
     @param   method       The adjustment method (display server and protocol)
     @return  :(int, int)  Input parameters for `MethodCapabilities.__init__`
     '''
-    cdef libgamma_method_capabilities_t caps
-    libgamma_method_capabilities(&caps, <int>method)
+    cdef struct_libgamma_method_capabilities caps
+    r = int(libgamma_method_capabilities(&caps, sizeof(struct_libgamma_method_capabilities), <int>method))
+    if not r == 0:
+        return (0, int(errno) if r == -1 else r)
     booleans = 0
     crtc_information = int(caps.crtc_information)
     booleans |= (0 if caps.default_site_known            == 0 else 1) <<  0
@@ -773,7 +784,7 @@ def libgamma_native_method_default_site(method : int) -> str:
                      if multiple sites are not supported by the adjustment
                      method
     '''
-    cdef char *var
+    cdef const char *var
     cdef bytes bs
     var = libgamma_method_default_site(<int>method)
     if var is NULL:
@@ -801,7 +812,7 @@ def libgamma_native_method_default_site_variable(method : int) -> str:
     return bs.decode('utf-8', 'strict')
 
 
-def libgamma_native_site_create(method : int, site : str) -> tuple:
+def libgamma_native_site_create(method : int, site : str | NoneType) -> tuple:
     '''
     Create an allocated site state
     
@@ -817,10 +828,10 @@ def libgamma_native_site_create(method : int, site : str) -> tuple:
                                                          on error: the value of the error identifier
                                                          provided by this library or `errno`
     '''
-    cdef libgamma_site_state_t *this
+    cdef libgamma_site_state *this
     cdef char *site_
     cdef size_t this_address
-    this = <libgamma_site_state_t *>malloc(sizeof(libgamma_site_state_t))
+    this = <libgamma_site_state *>malloc(sizeof(libgamma_site_state))
     if this is NULL:
         raise MemoryError()
     this_address = <size_t><void *>this
@@ -848,9 +859,9 @@ def libgamma_native_site_free(this : int):
     @param  this  The site state
     '''
     cdef size_t this_address
-    cdef libgamma_site_state_t *this_
+    cdef libgamma_site_state *this_
     this_address = <size_t>this
-    this_ = <libgamma_site_state_t *><void *>this_address
+    this_ = <libgamma_site_state *><void *>this_address
     libgamma_site_free(this_)
 
 
@@ -863,9 +874,9 @@ def libgamma_native_site_restore(this : int) -> int:
                    identifier provided by this library or `errno`
     '''
     cdef size_t this_address
-    cdef libgamma_site_state_t *this_
+    cdef libgamma_site_state *this_
     this_address = <size_t>this
-    this_ = <libgamma_site_state_t *><void *>this_address
+    this_ = <libgamma_site_state *><void *>this_address
     r = int(libgamma_site_restore(this_))
     return int(errno) if r == -1 else r
 
@@ -881,13 +892,13 @@ def libgamma_native_partition_create(site : int, partition : int) -> tuple:
                                                          on error: the value of the error identifier
                                                          provided by this library or `errno`
     '''
-    cdef libgamma_partition_state_t *this
-    cdef libgamma_site_state_t *site_
+    cdef libgamma_partition_state *this
+    cdef libgamma_site_state *site_
     cdef size_t this_address
     cdef size_t site_address
     site_address = <size_t>site
-    site_ = <libgamma_site_state_t *><void *>site_address
-    this = <libgamma_partition_state_t *>malloc(sizeof(libgamma_partition_state_t))
+    site_ = <libgamma_site_state *><void *>site_address
+    this = <libgamma_partition_state *>malloc(sizeof(libgamma_partition_state))
     if this is NULL:
         raise MemoryError()
     this_address = <size_t><void *>this
@@ -906,9 +917,9 @@ def libgamma_native_partition_free(this : int):
     @param  this  The partition state
     '''
     cdef size_t this_address
-    cdef libgamma_partition_state_t *this_
+    cdef libgamma_partition_state *this_
     this_address = <size_t>this
-    this_ = <libgamma_partition_state_t *><void *>this_address
+    this_ = <libgamma_partition_state *><void *>this_address
     libgamma_partition_free(this_)
 
 
@@ -921,9 +932,9 @@ def libgamma_native_partition_restore(this : int) -> int:
                    identifier provided by this library or `errno`
     '''
     cdef size_t this_address
-    cdef libgamma_partition_state_t *this_
+    cdef libgamma_partition_state *this_
     this_address = <size_t>this
-    this_ = <libgamma_partition_state_t *><void *>this_address
+    this_ = <libgamma_partition_state *><void *>this_address
     r = int(libgamma_partition_restore(this_))
     return int(errno) if r == -1 else r
 
@@ -938,13 +949,13 @@ def libgamma_native_crtc_create(partition : int, crtc : int) -> tuple:
                           Second value:  Zero on success, otherwise the value of an error
                                          identifier provided by this library or `errno`
     '''
-    cdef libgamma_crtc_state_t *this
-    cdef libgamma_partition_state_t *partition_
+    cdef libgamma_crtc_state *this
+    cdef libgamma_partition_state *partition_
     cdef size_t this_address
     cdef size_t partition_address
     partition_address = <size_t>partition
-    partition_ = <libgamma_partition_state_t *><void *>partition_address
-    this = <libgamma_crtc_state_t *>malloc(sizeof(libgamma_crtc_state_t))
+    partition_ = <libgamma_partition_state *><void *>partition_address
+    this = <libgamma_crtc_state *>malloc(sizeof(libgamma_crtc_state))
     if this is NULL:
         raise MemoryError()
     this_address = <size_t><void *>this
@@ -963,9 +974,9 @@ def libgamma_native_crtc_free(this : int):
     @param  this  The CRTC state
     '''
     cdef size_t this_address
-    cdef libgamma_crtc_state_t *this_
+    cdef libgamma_crtc_state *this_
     this_address = <size_t>this
-    this_ = <libgamma_crtc_state_t *><void *>this_address
+    this_ = <libgamma_crtc_state *><void *>this_address
     libgamma_crtc_free(this_)
 
 
@@ -978,9 +989,9 @@ def libgamma_native_crtc_restore(this : int) -> int:
                    identifier provided by this library or `errno`
     '''
     cdef size_t this_address
-    cdef libgamma_crtc_state_t *this_
+    cdef libgamma_crtc_state *this_
     this_address = <size_t>this
-    this_ = <libgamma_crtc_state_t *><void *>this_address
+    this_ = <libgamma_crtc_state *><void *>this_address
     r = int(libgamma_crtc_restore(this_))
     return int(errno) if r == -1 else r
 
@@ -995,13 +1006,13 @@ def libgamma_native_get_crtc_information(crtc : int, fields : int) -> tuple:
                             Second value:  Zero on success, -1 on error; on error refer to
                                            the error reports in the return
     '''
-    cdef libgamma_crtc_information_t info
+    cdef libgamma_crtc_information info
     cdef size_t crtc_address
-    cdef libgamma_crtc_state_t *crtc_
+    cdef libgamma_crtc_state *crtc_
     cdef bytes bs
     crtc_address = <size_t>crtc
-    crtc_ = <libgamma_crtc_state_t *><void *>crtc_address
-    r = int(libgamma_get_crtc_information(&info, crtc_, <int32_t>fields))
+    crtc_ = <libgamma_crtc_state *><void *>crtc_address
+    r = int(libgamma_get_crtc_information(&info, sizeof(libgamma_crtc_information), crtc_, <int32_t>fields))
     rc = []
     connector_name = None
     if info.connector_name is not NULL:
@@ -1056,12 +1067,12 @@ def libgamma_native_crtc_get_gamma_ramps8(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_ramps8_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_ramps8 *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_ramps8_t *><void *>ramps_address
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_ramps8 *><void *>ramps_address
     r = int(libgamma_crtc_get_gamma_ramps8(this_, ramps_))
     return int(errno) if r == -1 else r
 
@@ -1077,13 +1088,13 @@ def libgamma_native_crtc_set_gamma_ramps8(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_ramps8_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_ramps8 *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_ramps8_t *><void *>ramps_address
-    r = int(libgamma_crtc_set_gamma_ramps8(this_, ramps_[0]))
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_ramps8 *><void *>ramps_address
+    r = int(libgamma_crtc_set_gamma_ramps8(this_, ramps_))
     return int(errno) if r == -1 else r
 
 
@@ -1098,12 +1109,12 @@ def libgamma_native_crtc_get_gamma_ramps16(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_ramps16_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_ramps16 *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_ramps16_t *><void *>ramps_address
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_ramps16 *><void *>ramps_address
     r = int(libgamma_crtc_get_gamma_ramps16(this_, ramps_))
     return int(errno) if r == -1 else r
 
@@ -1119,13 +1130,13 @@ def libgamma_native_crtc_set_gamma_ramps16(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_ramps16_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_ramps16 *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_ramps16_t *><void *>ramps_address
-    r = int(libgamma_crtc_set_gamma_ramps16(this_, ramps_[0]))
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_ramps16 *><void *>ramps_address
+    r = int(libgamma_crtc_set_gamma_ramps16(this_, ramps_))
     return int(errno) if r == -1 else r
 
 
@@ -1140,12 +1151,12 @@ def libgamma_native_crtc_get_gamma_ramps32(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_ramps32_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_ramps32 *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_ramps32_t *><void *>ramps_address
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_ramps32 *><void *>ramps_address
     r = int(libgamma_crtc_get_gamma_ramps32(this_, ramps_))
     return int(errno) if r == -1 else r
 
@@ -1161,13 +1172,13 @@ def libgamma_native_crtc_set_gamma_ramps32(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_ramps32_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_ramps32 *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_ramps32_t *><void *>ramps_address
-    r = int(libgamma_crtc_set_gamma_ramps32(this_, ramps_[0]))
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_ramps32 *><void *>ramps_address
+    r = int(libgamma_crtc_set_gamma_ramps32(this_, ramps_))
     return int(errno) if r == -1 else r
 
 
@@ -1182,12 +1193,12 @@ def libgamma_native_crtc_get_gamma_ramps64(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_ramps64_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_ramps64 *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_ramps64_t *><void *>ramps_address
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_ramps64 *><void *>ramps_address
     r = int(libgamma_crtc_get_gamma_ramps64(this_, ramps_))
     return int(errno) if r == -1 else r
 
@@ -1203,13 +1214,13 @@ def libgamma_native_crtc_set_gamma_ramps64(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t * this_
-    cdef libgamma_gamma_ramps64_t * ramps_
+    cdef libgamma_crtc_state * this_
+    cdef libgamma_gamma_ramps64 * ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_ramps64_t *><void *>ramps_address
-    r = int(libgamma_crtc_set_gamma_ramps64(this_, ramps_[0]))
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_ramps64 *><void *>ramps_address
+    r = int(libgamma_crtc_set_gamma_ramps64(this_, ramps_))
     return int(errno) if r == -1 else r
 
 
@@ -1224,12 +1235,12 @@ def libgamma_native_crtc_get_gamma_rampsf(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_rampsf_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_rampsf *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_rampsf_t *><void *>ramps_address
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_rampsf *><void *>ramps_address
     r = int(libgamma_crtc_get_gamma_rampsf(this_, ramps_))
     return int(errno) if r == -1 else r
 
@@ -1245,13 +1256,13 @@ def libgamma_native_crtc_set_gamma_rampsf(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_rampsf_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_rampsf *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_rampsf_t *><void *>ramps_address
-    r = int(libgamma_crtc_set_gamma_rampsf(this_, ramps_[0]))
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_rampsf *><void *>ramps_address
+    r = int(libgamma_crtc_set_gamma_rampsf(this_, ramps_))
     return int(errno) if r == -1 else r
 
 
@@ -1266,12 +1277,12 @@ def libgamma_native_crtc_get_gamma_rampsd(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_rampsd_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_rampsd *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_rampsd_t *><void *>ramps_address
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_rampsd *><void *>ramps_address
     r = int(libgamma_crtc_get_gamma_rampsd(this_, ramps_))
     return int(errno) if r == -1 else r
 
@@ -1287,11 +1298,11 @@ def libgamma_native_crtc_set_gamma_rampsd(this : int, ramps : int) -> int:
     '''
     cdef size_t this_address
     cdef size_t ramps_address
-    cdef libgamma_crtc_state_t *this_
-    cdef libgamma_gamma_rampsd_t *ramps_
+    cdef libgamma_crtc_state *this_
+    cdef libgamma_gamma_rampsd *ramps_
     this_address = <size_t>this
     ramps_address = <size_t>ramps
-    this_ = <libgamma_crtc_state_t *><void *>this_address
-    ramps_ = <libgamma_gamma_rampsd_t *><void *>ramps_address
-    r = int(libgamma_crtc_set_gamma_rampsd(this_, ramps_[0]))
+    this_ = <libgamma_crtc_state *><void *>this_address
+    ramps_ = <libgamma_gamma_rampsd *><void *>ramps_address
+    r = int(libgamma_crtc_set_gamma_rampsd(this_, ramps_))
     return int(errno) if r == -1 else r

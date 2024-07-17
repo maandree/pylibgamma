@@ -9,7 +9,7 @@ from libc.errno cimport errno
 
 
 cdef extern from "include-libgamma.h":
-    ctypedef struct libgamma_gamma_ramps8_t:
+    ctypedef struct libgamma_gamma_ramps8 "struct libgamma_gamma_ramps8":
         # Gamma ramp structure for 8-bit gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -18,7 +18,7 @@ cdef extern from "include-libgamma.h":
         uint8_t *green    # The gamma ramp for the green channel
         uint8_t *blue     # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_ramps16_t:
+    ctypedef struct libgamma_gamma_ramps16 "struct libgamma_gamma_ramps16":
         # Gamma ramp structure for 16-bit gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -27,7 +27,7 @@ cdef extern from "include-libgamma.h":
         uint16_t *green   # The gamma ramp for the green channel
         uint16_t *blue    # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_ramps32_t:
+    ctypedef struct libgamma_gamma_ramps32 "struct libgamma_gamma_ramps32":
         # Gamma ramp structure for 32-bit gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -36,7 +36,7 @@ cdef extern from "include-libgamma.h":
         uint32_t *green   # The gamma ramp for the green channel
         uint32_t *blue    # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_ramps64_t:
+    ctypedef struct libgamma_gamma_ramps64 "struct libgamma_gamma_ramps64":
         # Gamma ramp structure for 64-bit gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -45,7 +45,7 @@ cdef extern from "include-libgamma.h":
         uint64_t *green   # The gamma ramp for the green channel
         uint64_t *blue    # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_rampsf_t:
+    ctypedef struct libgamma_gamma_rampsf "struct libgamma_gamma_rampsf":
         # Gamma ramp structure for `float` gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -54,7 +54,7 @@ cdef extern from "include-libgamma.h":
         float *green      # The gamma ramp for the green channel
         float *blue       # The gamma ramp for the blue channel
 
-    ctypedef struct libgamma_gamma_rampsd_t:
+    ctypedef struct libgamma_gamma_rampsd "struct libgamma_gamma_rampsd":
         # Gamma ramp structure for `double` gamma ramps
         size_t red_size   # The size of `red`
         size_t green_size # The size of `green`
@@ -63,7 +63,7 @@ cdef extern from "include-libgamma.h":
         double *green     # The gamma ramp for the green channel
         double *blue      # The gamma ramp for the blue channel
 
-cdef extern int libgamma_gamma_ramps8_initialise(libgamma_gamma_ramps8_t *this) nogil
+cdef extern int libgamma_gamma_ramps8_initialise(libgamma_gamma_ramps8 *this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation
@@ -75,7 +75,7 @@ set to the sizes of the gamma ramps that should be allocated
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly
 '''
 
-cdef extern void libgamma_gamma_ramps8_free(libgamma_gamma_ramps8_t *this) nogil
+cdef extern void libgamma_gamma_ramps8_free(libgamma_gamma_ramps8 *this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_ramps8_initialise` or
@@ -85,7 +85,7 @@ the pointer to the structure
 @param  this  The gamma ramps
 '''
 
-cdef extern int libgamma_gamma_ramps16_initialise(libgamma_gamma_ramps16_t *this) nogil
+cdef extern int libgamma_gamma_ramps16_initialise(libgamma_gamma_ramps16 *this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation
@@ -97,7 +97,7 @@ set to the sizes of the gamma ramps that should be allocated
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly
 '''
 
-cdef extern void libgamma_gamma_ramps16_free(libgamma_gamma_ramps16_t *this) nogil
+cdef extern void libgamma_gamma_ramps16_free(libgamma_gamma_ramps16 *this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_ramps16_initialise` or
@@ -107,7 +107,7 @@ the pointer to the structure
 @param  this  The gamma ramps
 '''
 
-cdef extern int libgamma_gamma_ramps32_initialise(libgamma_gamma_ramps32_t *this) nogil
+cdef extern int libgamma_gamma_ramps32_initialise(libgamma_gamma_ramps32 *this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation
@@ -119,7 +119,7 @@ set to the sizes of the gamma ramps that should be allocated
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly
 '''
 
-cdef extern void libgamma_gamma_ramps32_free(libgamma_gamma_ramps32_t *this) nogil
+cdef extern void libgamma_gamma_ramps32_free(libgamma_gamma_ramps32 *this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_ramps32_initialise` or
@@ -129,7 +129,7 @@ the pointer to the structure
 @param  this  The gamma ramps
 '''
 
-cdef extern int libgamma_gamma_ramps64_initialise(libgamma_gamma_ramps64_t *this) nogil
+cdef extern int libgamma_gamma_ramps64_initialise(libgamma_gamma_ramps64 *this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation
@@ -141,7 +141,7 @@ set to the sizes of the gamma ramps that should be allocated
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly
 '''
 
-cdef extern void libgamma_gamma_ramps64_free(libgamma_gamma_ramps64_t *this) nogil
+cdef extern void libgamma_gamma_ramps64_free(libgamma_gamma_ramps64 *this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_ramps64_initialise` or
@@ -151,7 +151,7 @@ the pointer to the structure
 @param  this  The gamma ramps
 '''
 
-cdef extern int libgamma_gamma_rampsf_initialise(libgamma_gamma_rampsf_t *this) nogil
+cdef extern int libgamma_gamma_rampsf_initialise(libgamma_gamma_rampsf *this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation
@@ -163,7 +163,7 @@ set to the sizes of the gamma ramps that should be allocated
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly
 '''
 
-cdef extern void libgamma_gamma_rampsf_free(libgamma_gamma_rampsf_t *this) nogil
+cdef extern void libgamma_gamma_rampsf_free(libgamma_gamma_rampsf *this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_rampsf_initialise` or
@@ -173,7 +173,7 @@ the pointer to the structure
 @param  this  The gamma ramps
 '''
 
-cdef extern int libgamma_gamma_rampsd_initialise(libgamma_gamma_rampsd_t *this) nogil
+cdef extern int libgamma_gamma_rampsd_initialise(libgamma_gamma_rampsd *this) nogil
 '''
 Initialise a gamma ramp in the proper way that allows all adjustment
 methods to read from and write to it without causing segmentation violation
@@ -185,7 +185,7 @@ set to the sizes of the gamma ramps that should be allocated
 @return        Zero on success, -1 on allocation error, `errno` will be set accordingly
 '''
 
-cdef extern void libgamma_gamma_rampsd_free(libgamma_gamma_rampsd_t *this) nogil
+cdef extern void libgamma_gamma_rampsd_free(libgamma_gamma_rampsd *this) nogil
 '''
 Release resources that are held by a gamma ramp strcuture that
 has been allocated by `libgamma_gamma_rampsd_initialise` or
@@ -210,8 +210,8 @@ def libgamma_native_gamma_ramps8_create(red_size : int, green_size : int, blue_s
                               Element 3:  The address of the gamma ramp for the green channel
                               Element 4:  The address of the gamma ramp for the blue channel
     '''
-    cdef void *allocation = malloc(sizeof(libgamma_gamma_ramps8_t))
-    cdef libgamma_gamma_ramps8_t *item = <libgamma_gamma_ramps8_t *>allocation
+    cdef void *allocation = malloc(sizeof(libgamma_gamma_ramps8))
+    cdef libgamma_gamma_ramps8 *item = <libgamma_gamma_ramps8 *>allocation
     cdef size_t red, green, blue
     if item is NULL:
         return int(errno)
@@ -236,7 +236,7 @@ def libgamma_native_gamma_ramps8_free(this : int):
     @param  this  The gamma ramps
     '''
     cdef void *address = <void *><size_t>this
-    cdef libgamma_gamma_ramps8_t *item = <libgamma_gamma_ramps8_t *>address
+    cdef libgamma_gamma_ramps8 *item = <libgamma_gamma_ramps8 *>address
     libgamma_gamma_ramps8_free(item)
 
 
@@ -280,8 +280,8 @@ def libgamma_native_gamma_ramps16_create(red_size : int, green_size : int, blue_
                               Element 3:  The address of the gamma ramp for the green channel
                               Element 4:  The address of the gamma ramp for the blue channel
     '''
-    cdef void *allocation = malloc(sizeof(libgamma_gamma_ramps16_t))
-    cdef libgamma_gamma_ramps16_t *item = <libgamma_gamma_ramps16_t *>allocation
+    cdef void *allocation = malloc(sizeof(libgamma_gamma_ramps16))
+    cdef libgamma_gamma_ramps16 *item = <libgamma_gamma_ramps16 *>allocation
     cdef size_t red, green, blue
     if item is NULL:
         return int(errno)
@@ -306,7 +306,7 @@ def libgamma_native_gamma_ramps16_free(this : int):
     @param  this  The gamma ramps
     '''
     cdef void *address = <void*><size_t>this
-    cdef libgamma_gamma_ramps16_t *item = <libgamma_gamma_ramps16_t *>address
+    cdef libgamma_gamma_ramps16 *item = <libgamma_gamma_ramps16 *>address
     libgamma_gamma_ramps16_free(item)
 
 
@@ -350,8 +350,8 @@ def libgamma_native_gamma_ramps32_create(red_size : int, green_size : int, blue_
                               Element 3:  The address of the gamma ramp for the green channel
                               Element 4:  The address of the gamma ramp for the blue channel
     '''
-    cdef void *allocation = malloc(sizeof(libgamma_gamma_ramps32_t))
-    cdef libgamma_gamma_ramps32_t *item = <libgamma_gamma_ramps32_t *>allocation
+    cdef void *allocation = malloc(sizeof(libgamma_gamma_ramps32))
+    cdef libgamma_gamma_ramps32 *item = <libgamma_gamma_ramps32 *>allocation
     cdef size_t red, green, blue
     if item is NULL:
         return int(errno)
@@ -376,7 +376,7 @@ def libgamma_native_gamma_ramps32_free(this : int):
     @param  this  The gamma ramps
     '''
     cdef void *address = <void *><size_t>this
-    cdef libgamma_gamma_ramps32_t *item = <libgamma_gamma_ramps32_t *>address
+    cdef libgamma_gamma_ramps32 *item = <libgamma_gamma_ramps32 *>address
     libgamma_gamma_ramps32_free(item)
 
 
@@ -420,8 +420,8 @@ def libgamma_native_gamma_ramps64_create(red_size : int, green_size : int, blue_
                               Element 3:  The address of the gamma ramp for the green channel
                               Element 4:  The address of the gamma ramp for the blue channel
     '''
-    cdef void *allocation = malloc(sizeof(libgamma_gamma_ramps64_t))
-    cdef libgamma_gamma_ramps64_t *item = <libgamma_gamma_ramps64_t *>allocation
+    cdef void *allocation = malloc(sizeof(libgamma_gamma_ramps64))
+    cdef libgamma_gamma_ramps64 *item = <libgamma_gamma_ramps64 *>allocation
     cdef size_t red, green, blue
     if item is NULL:
         return int(errno)
@@ -446,7 +446,7 @@ def libgamma_native_gamma_ramps64_free(this : int):
     @param  this  The gamma ramps
     '''
     cdef void *address = <void *><size_t>this
-    cdef libgamma_gamma_ramps64_t *item = <libgamma_gamma_ramps64_t *>address
+    cdef libgamma_gamma_ramps64 *item = <libgamma_gamma_ramps64 *>address
     libgamma_gamma_ramps64_free(item)
 
 
@@ -490,8 +490,8 @@ def libgamma_native_gamma_rampsf_create(red_size : int, green_size : int, blue_s
                               Element 3:  The address of the gamma ramp for the green channel
                               Element 4:  The address of the gamma ramp for the blue channel
     '''
-    cdef void *allocation = malloc(sizeof(libgamma_gamma_rampsf_t))
-    cdef libgamma_gamma_rampsf_t *item = <libgamma_gamma_rampsf_t *>allocation
+    cdef void *allocation = malloc(sizeof(libgamma_gamma_rampsf))
+    cdef libgamma_gamma_rampsf *item = <libgamma_gamma_rampsf *>allocation
     cdef size_t red, green, blue
     if item is NULL:
         return int(errno)
@@ -516,7 +516,7 @@ def libgamma_native_gamma_rampsf_free(this : int):
     @param  this  The gamma ramps
     '''
     cdef void *address = <void *><size_t>this
-    cdef libgamma_gamma_rampsf_t *item = <libgamma_gamma_rampsf_t *>address
+    cdef libgamma_gamma_rampsf *item = <libgamma_gamma_rampsf *>address
     libgamma_gamma_rampsf_free(item)
 
 
@@ -560,8 +560,8 @@ def libgamma_native_gamma_rampsd_create(red_size : int, green_size : int, blue_s
                               Element 3:  The address of the gamma ramp for the green channel
                               Element 4:  The address of the gamma ramp for the blue channel
     '''
-    cdef void *allocation = malloc(sizeof(libgamma_gamma_rampsd_t))
-    cdef libgamma_gamma_rampsd_t *item = <libgamma_gamma_rampsd_t *>allocation
+    cdef void *allocation = malloc(sizeof(libgamma_gamma_rampsd))
+    cdef libgamma_gamma_rampsd *item = <libgamma_gamma_rampsd *>allocation
     cdef size_t red, green, blue
     if item is NULL:
         return int(errno)
@@ -586,7 +586,7 @@ def libgamma_native_gamma_rampsd_free(this : int):
     @param  this  The gamma ramps
     '''
     cdef void *address = <void *><size_t>this
-    cdef libgamma_gamma_rampsd_t *item = <libgamma_gamma_rampsd_t *>address
+    cdef libgamma_gamma_rampsd *item = <libgamma_gamma_rampsd *>address
     libgamma_gamma_rampsd_free(item)
 
 

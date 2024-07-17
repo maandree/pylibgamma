@@ -64,7 +64,7 @@ def libgamma_native_get_group_gid() -> int:
     Group that the user needs to be a member of if
     `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned
     '''
-    return int(libgamma_group_gid)
+    return int(libgamma_group_gid_get())
 
 
 def libgamma_native_set_group_gid(gid : int):
@@ -74,7 +74,7 @@ def libgamma_native_set_group_gid(gid : int):
     Group that the user needs to be a member of if
     `LIBGAMMA_DEVICE_REQUIRE_GROUP` is returned
     '''
-    libgamma_group_gid = <int>gid
+    libgamma_group_gid_set(<int>gid)
 
 
 def libgamma_native_get_group_name() -> str:
