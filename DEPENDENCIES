@@ -4,7 +4,6 @@ RUNTIME DEPENDENCIES:
 	libgamma>=0.7.4
 	libc
 
-
 BUILD DEPENDENCIES:
 
 	python3
@@ -15,7 +14,6 @@ BUILD DEPENDENCIES:
 	cython
 	coreutils
 	pkg-config
-
 
 INSTALL DEPENDENCIES:
 

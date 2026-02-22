@@ -390,8 +390,8 @@ LIBGAMMA_ERROR_MIN = -46
 '''
 The number of the libgamma error with the
 lowest number. If this is lower than the
-number your program thinks it should be sould
-update your program for new errors.
+number your program thinks it should be, you
+should update your program for new errors.
 '''
 
 
